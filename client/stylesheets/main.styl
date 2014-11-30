@@ -1,0 +1,28 @@
+@require 'nib'
+
+// Configuration, helpers, and mixins
+@require 'colours/colours.import'
+@require 'typography/typography.import'
+
+// Global
+@require 'global.import'
+
+// Views
+@require '../views/dashboard/dashboard.import'
+
+// Components
+@require '../components/buttons/buttons.import'
+@require '../components/expense/expense.import'
+
+html,
+body
+    margin: 0
+    padding: 0
+
+html
+    height: 100%
+    background: colour('white')
+
+body
+    position: relative
+    min-height: 100%

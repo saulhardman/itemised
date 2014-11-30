@@ -1,0 +1,51 @@
+html
+    box-sizing: border-box
+    
+*
+    margin: 0
+    padding: 0
+
+    &,
+    &:before,
+    &:after
+        box-sizing: inherit
+
+/**
+ * Lists
+ */
+
+ul
+    margin: 0
+    padding: 0
+    list-style: none
+
+/**
+ * Links
+ */
+
+a
+
+    &,
+    &:hover,
+    &:active,
+    &:focus
+        color: currentColor
+        text-decoration: none
+
+/**
+ * Buttons
+ */
+
+button
+    border: none
+
+    &:focus,
+    &:active
+        outline: none
+
+.group
+    
+    &:after
+        content: ""
+        display: table
+        clear: both

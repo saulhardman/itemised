@@ -1,0 +1,11 @@
+<template name="dashboard">
+  <section class="dashboard">
+    <ul class="expenses-list">
+      {{#each expenses}}
+        <li class="expenses-list__item">{{> expense}}</li>
+      {{/each}}
+    </ul>
+
+    <a class="button button--functional dashboard__add-expense-button" href="/expenses/add">Add Expense</a>
+  </section>
+</template>

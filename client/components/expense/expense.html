@@ -1,0 +1,16 @@
+<template name="expense">
+  <div class="js-expense expense">
+    <div class="expense__details">
+      <p class="expense__note">{{note}}</p>
+      <span class="expense__separator"></span>
+      <p class="expense__amount">{{currency amount}}</p>
+    </div>
+    {{#if location}}
+        <p class="expense__location">{{location}}</p>
+    {{else}}
+        <p class="expense__location expense__location--empty">No Location</p>
+    {{/if}}
+    <time class="expense__date" datetime="{{date}}">{{moment date format="dddd, Do [of] MMMM [at] hA"}}</time>
+    <button class="js-delete-expense expense__delete">Delete</button>
+  </div>
+</template>
