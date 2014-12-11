@@ -7,10 +7,15 @@
     </div>
     {{#if location}}
         <p class="expense__location">{{location}}</p>
-    {{else}}
-        <p class="expense__location expense__location--empty">No Location</p>
     {{/if}}
     <time class="expense__date" datetime="{{date}}">{{moment date format="dddd, Do [of] MMMM [at] hA"}}</time>
+    {{#if hasTags}}
+      <ul class="expense__tags">
+        {{#each tags}}
+          <li class="expense__tag"><a class="expense__tag-link expense__tag-link" href="#" title="Show all `{{capitalise this}}` expenses">{{capitalise this}}</a></li>
+        {{/each}}
+      </ul>
+    {{/if}}
     <button class="js-delete-expense expense__delete">Delete</button>
   </div>
 </template>

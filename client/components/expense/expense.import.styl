@@ -2,9 +2,7 @@
     height = 96px
     position: relative
     overflow: hidden
-    padding: 16px
-    background: colour('white')
-    border-bottom: 1px dashed colour('black')
+    padding: 16px 16px 12px
 
     &__details
         display(flex)
@@ -59,6 +57,50 @@
 
     &__date:before
         content: ''
+
+    &__tags
+        margin: 10px 0 0 -16px
+        padding: 10px 16px 0
+        width: calc(100% + 32px)
+        border-top: 1px dashed colour('grey', 'light')
+
+    &__tag
+        font-scale('body', '1')
+        display: inline-block
+        
+    &__tag-link
+        position: relative
+        padding: 5px 6px 5px 25px
+        border: 1px solid colour('grey', 'light')
+        
+        &:before
+            content: ''
+            position: absolute
+            top: 50%
+            left: 7px
+            width: 12px
+            height: @width
+            margin: -(@height/2) 0 0 0
+            border: 1px solid colour('grey', 'light')
+
+        &:hover,
+        &:focus,
+        &:active
+            background: colour('grey', 'medium')
+            border-color: colour('grey', 'medium')
+            
+            &:before
+                background: colour('white')
+                border-color: colour('white')
+            
+        &--selected
+            color: colour('white')
+            background: colour('black')
+            border-color: colour('black')
+            
+            &:before
+                background: colour('white')
+                border-color: colour('white')
 
     &__delete
         position: absolute
