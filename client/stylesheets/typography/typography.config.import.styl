@@ -1,3 +1,6 @@
+open-sans = 'Open Sans', helvetica, arial, verdana, sans-serif;
+mono = 'PT Mono', helvetica, arial, verdana, sans-serif;
+
 font-weights = {
   thin: 100,
   light: 200,
@@ -8,4 +11,41 @@ font-weights = {
   bold: 700,
   black: 800,
   ultra-black: 900,
+}
+
+font-styles = {
+  header: {
+    font-family: open-sans,
+    scale: {
+      '1': {
+        font-size: rem(16),
+        line-height: rem(20),
+      },
+      '2': {
+        font-size: rem(20),
+        line-height: rem(24),
+      },
+      '3': {
+        font-size: rem(24),
+        line-height: rem(36),
+      },
+      '4': {
+        font-size: rem(32),
+        line-height: rem(40),
+      },
+    }
+  },
+  body: {
+    font-family: mono,
+    scale: {
+      '1': {
+        font-size: rem(12),
+        line-height: rem(14),
+      },
+      '2': {
+        font-size: rem(14),
+        line-height: rem(16),
+      },
+    }
+  }
 }
