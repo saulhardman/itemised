@@ -1,17 +1,20 @@
 Meteor.startup(function () {
   var expense;
+  var count = Expenses.find().count();
   var i;
 
-  if (Expenses.find().count() === 0) {
+  if (count < 10) {
     expense = {
       note: 'This is an example of a note',
       amount: '100',
-      createdBy: '4kRGPMn3vGByF6Rmh'
+      date: Date.now(),
+      createdBy: '4kRGPMn3vGByF6Rmh',
+      tags: ['food', 'essentials'],
     };
 
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < 10 - count; i++) {
       Expenses.insert(expense);
-    }      
+    }
   }
 
 });
