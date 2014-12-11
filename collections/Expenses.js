@@ -1,4 +1,4 @@
-Expenses = new Mongo.Collection("expenses");
+Expenses = new Mongo.Collection('expenses');
 
 Expenses.allow({
   insert: function (userId, expense) {
