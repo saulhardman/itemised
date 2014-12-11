@@ -12,4 +12,5 @@ iron:router
 jquery
 mrt:moment
 stylus
+fastclick
 
