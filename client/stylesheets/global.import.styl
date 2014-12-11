@@ -24,6 +24,7 @@ ul
  */
 
 a
+    display: inline-block
 
     &,
     &:hover,
@@ -37,11 +38,15 @@ a
  */
 
 button
-    border: none
+    border: 0
 
     &:focus,
     &:active
         outline: none
+
+/**
+ * Helpers
+ */
 
 .group
     
@@ -49,3 +54,43 @@ button
         content: ""
         display: table
         clear: both
+/**
+ * Form elements
+ */
+
+label,
+select,
+button,
+[type="radio"],
+[type="checkbox"]
+    cursor: pointer
+
+[type="text"],
+[type="number"],
+[type="search"],
+[type="email"],
+[type="date"],
+[type="time"]
+    margin: 0
+    padding: 0
+    color: colour('grey', 'dark')
+    background: colour('white')
+    background: linear-gradient(to bottom, colour('white'), colour('white'))
+    border: 0
+    border-radius: 0
+
+    &:focus
+        outline: none
+        
+    &::-webkit-input-placeholder
+        color: colour('grey', 'medium')
+        
+    &::-moz-placeholder
+        color: colour('grey', 'medium')
+        
+    &:-ms-input-placeholder
+        color: colour('grey', 'medium')
+        
+    &::placeholder
+        color: colour('grey', 'medium')
+        
