@@ -5,12 +5,23 @@ Template.expense.helpers({
 });
 
 Template.expense.events({
-  'click .js-expense': function (e) {
-    var $this = $(e.currentTarget);
+  'click .js-expense, toggle .js-expense': function (event, template) {
+    var $this = $(event.currentTarget);
 
-    $this.find('.js-delete-expense').toggle();
+    $this
+      .toggleClass('expense--is-expanded')
+      .toggleClass('js-expense--is-expanded')
+      .find('.expense__content')
+        .toggleClass('expense--is-expanded__content')
+        .end()
+      .find('.expense__delete-button')
+        .toggleClass('expense--is-expanded__delete-button');
+
+    if (event.type === 'click') {
+      $('.js-expense--is-expanded').not($this).trigger('toggle');
+    }
   },
   'click .js-delete-expense': function () {
     Expenses.remove(this._id);
-  },
+  }
 });

@@ -2,7 +2,29 @@
     height = 96px
     position: relative
     overflow: hidden
-    padding: 16px 16px 12px
+    background: colour('grey', 'light')
+
+    &--is-expanded        
+        &__content
+            transform: translateX(-100px)
+            
+        &__delete-button
+            transform: translateX(-100px)
+            
+    &__content
+        position: relative
+        padding: 16px 16px 12px
+        background: colour('white')
+        transition: transform .4s
+        
+        &:after
+            content: ''
+            position: absolute
+            top: 0
+            left: 100%
+            width: 10px
+            height: 100%
+            background: linear-gradient(to right, colour('grey', 'medium'), colour('grey', 'light'))
 
     &__details
         display(flex)
@@ -102,12 +124,14 @@
                 background: colour('white')
                 border-color: colour('white')
 
-    &__delete
+    &__delete-button
         position: absolute
         top: 0
-        right: 0
-        display: none
-        margin: 10px 10px 10px 0
-        width: height - 20px
-        height: height - 20px
-        background: colour('red')
+        left: 100%
+        z-index: 1
+        width: 100px
+        height: 100%
+        text-indent: 100%
+        background: url('/icons/delete.svg') center center / 40px 40px no-repeat
+        border-radius: 50%
+        transition: transform .4s
