@@ -1,10 +1,14 @@
 <template name="dashboard">
   <section class="dashboard">
-    <ul class="expenses-list">
-      {{#each expenses}}
-        <li class="expenses-list__item">{{> expense}}</li>
-      {{/each}}
-    </ul>
+    {{#unless isEmpty}}
+      <ul class="list-of-expenses">
+        {{#each expenses}}
+          <li class="list-of-expenses__item">
+            {{> expense}}
+          </li>
+        {{/each}}
+      </ul>
+    {{/unless}}
 
     <a class="button button--functional dashboard__add-expense-button" href="/expenses/add">Add Expense</a>
   </section>
