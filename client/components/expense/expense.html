@@ -1,23 +1,30 @@
 <template name="expense">
-  <div class="js-expense expense">
-    <div class="expense__content">
-      <div class="expense__details">
-        <p class="expense__note">{{note}}</p>
-        <span class="expense__separator"></span>
-        <p class="expense__amount">{{currency amount}}</p>
+  <article class="js-expense expense">
+    <div class="js-container">
+      <svg viewBox="0 0 48 48" class="js-delete-icon--left icon expense__delete-icon expense__delete-icon--left">
+        <use xlink:href="#icon-delete"></use>
+      </svg>
+      <div class="js-content expense__content">
+        <div class="expense__details">
+          <p class="expense__note">{{note}}</p>
+          <span class="expense__separator"></span>
+          <p class="expense__amount">{{currency amount}}</p>
+        </div>
+        {{#if location}}
+            <p class="expense__location">{{location}}</p>
+        {{/if}}
+        <time class="expense__date" datetime="{{date}}">{{moment date format="dddd, Do [of] MMMM [at] hA"}}</time>
+        {{#if hasTags}}
+          <ul class="expense__tags">
+            {{#each tags}}
+              <li class="expense__tag"><a class="expense__tag-link expense__tag-link" href="#" title="Show all `{{capitalise this}}` expenses">{{capitalise this}}</a></li>
+            {{/each}}
+          </ul>
+        {{/if}}
       </div>
-      {{#if location}}
-          <p class="expense__location">{{location}}</p>
-      {{/if}}
-      <time class="expense__date" datetime="{{date}}">{{moment date format="dddd, Do [of] MMMM [at] hA"}}</time>
-      {{#if hasTags}}
-        <ul class="expense__tags">
-          {{#each tags}}
-            <li class="expense__tag"><a class="expense__tag-link expense__tag-link" href="#" title="Show all `{{capitalise this}}` expenses">{{capitalise this}}</a></li>
-          {{/each}}
-        </ul>
-      {{/if}}
+      <svg viewBox="0 0 48 48" class="js-delete-icon--right icon expense__delete-icon expense__delete-icon--right">
+        <use xlink:href="#icon-delete"></use>
+      </svg>
     </div>
-    <button class="js-delete-expense expense__delete-button">Delete</button>
-  </div>
+  </article>
 </template>

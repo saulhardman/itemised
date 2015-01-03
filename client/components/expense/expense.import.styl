@@ -2,20 +2,43 @@
     height = 96px
     position: relative
     overflow: hidden
-    background: colour('black')
+    background: colour('grey', 'medium');
+    
+    & + &
+        &:before
+            content: ''
+            position: absolute
+            z-index: 3
+            top: 0
+            left: 0
+            display: block
+            width: 100%
+            border-bottom: 1px dashed colour('black')
 
-    &--is-expanded        
-        &__content
-            transform: translateX(-100px)
+    &__delete-icon
+        size = 48px
+        position: absolute
+        z-index: 1
+        top: 50%
+        display: block
+        margin: -(size/2) 0 0
+        width: size
+        height: size
+        fill: colour('grey')
+        
+        &--left
+            left: 24px
             
-        &__delete-button
-            transform: translateX(-100px)
+        &--right
+            right: 24px
+            
+        &--is-active
+            fill: colour('black')
 
     &__content
         position: relative
+        z-index: 2
         padding: 16px 16px 12px
-        background: colour('white')
-        transition: transform .4s
 
     &__details
         display(flex)
@@ -23,6 +46,7 @@
         align-items(baseline)
         margin: 0 0 6px
 
+    &__content,
     &__note,
     &__amount
         background: colour('white')
@@ -114,15 +138,3 @@
             &:before
                 background: colour('white')
                 border-color: colour('white')
-
-    &__delete-button
-        position: absolute
-        top: 0
-        left: 100%
-        z-index: 1
-        width: 100px
-        height: 100%
-        text-indent: 100%
-        background: url('/icons/delete.svg') center center / 40px 40px no-repeat
-        border-radius: 50%
-        transition: transform .4s
