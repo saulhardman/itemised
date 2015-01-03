@@ -13,4 +13,5 @@ jquery
 mrt:moment
 stylus
 fastclick
+percolate:velocityjs
 
