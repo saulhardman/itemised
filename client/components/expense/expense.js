@@ -5,6 +5,9 @@ Template.expense.helpers({
 });
 
 Template.expense.events({
+  'touchstart .js-tags, touchmove .js-tags, touchend .js-tags': function (event) {
+    event.stopPropagation();
+  },
   'touchstart .js-expense': function (event, template) {
     var touch;
 
