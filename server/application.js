@@ -9,7 +9,7 @@ Meteor.startup(function () {
       amount: '100',
       date: Date.now(),
       createdBy: '4kRGPMn3vGByF6Rmh',
-      tags: ['food', 'essentials'],
+      tags: ['food', 'essentials', 'drinks', 'leisure', 'activity'],
     };
 
     for (i = 0; i < 10 - count; i++) {
