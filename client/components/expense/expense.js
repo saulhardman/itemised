@@ -139,7 +139,7 @@ SlideToDelete.prototype = {
   },
   destroy: function destroy(id, remove) {
     if (remove) {
-      Expenses.remove(id);
+      Expenses.collection.remove(id);
     }
 
     delete this.element;
