@@ -1,9 +1,10 @@
 Meteor.startup(function () {
   var expense;
-  var count = Expenses.find().count();
+  var count = Expenses.all().count();
+  var minimum = 5;
   var i;
 
-  if (count < 10) {
+  if (count < minimum) {
     expense = {
       note: 'This is an example of a note',
       amount: '100',
@@ -12,8 +13,8 @@ Meteor.startup(function () {
       tags: ['food', 'essentials', 'drinks', 'leisure', 'activity'],
     };
 
-    for (i = 0; i < 10 - count; i++) {
-      Expenses.insert(expense);
+    for (i = 0; i < minimum - count; i++) {
+      Expenses.collection.insert(expense);
     }
   }
 
