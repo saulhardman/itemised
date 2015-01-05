@@ -7,7 +7,7 @@ Meteor.startup(function () {
     expense = {
       note: 'This is an example of a note',
       amount: '100',
-      date: Date.now(),
+      date: new Date(),
       createdBy: '4kRGPMn3vGByF6Rmh',
       tags: ['food', 'essentials', 'drinks', 'leisure', 'activity'],
     };
