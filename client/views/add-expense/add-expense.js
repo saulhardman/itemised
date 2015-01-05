@@ -46,7 +46,7 @@ Template.addExpense.events({
       date: date,
       location: $location.val(),
       tags: $tags.val().split(',').map(function (value) {
-        return value.trim();
+        return value.trim().toLowerCase();
       }).filter(function (value) {
         return value !== '';
       }),
