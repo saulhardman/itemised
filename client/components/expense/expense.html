@@ -15,11 +15,13 @@
         {{/if}}
         <time class="expense__date" datetime="{{date}}">{{moment date format="dddd, Do [of] MMMM [at] hA"}}</time>
         {{#if hasTags}}
-          <ul class="js-tags expense__tags">
-            {{#each tags}}
-              <li class="expense__tag"><a class="expense__tag-link expense__tag-link" href="#" title="Show all `{{capitalise this}}` expenses">{{capitalise this}}</a></li>
-            {{/each}}
-          </ul>
+          <div class="expense__tags-container">
+            <ul class="js-tags expense__tags">
+              {{#each tags}}
+                <li class="expense__tag"><a class="expense__tag-link{{#if selected}} expense__tag-link--is-selected{{/if}}" href="{{href}}" title="Show all `{{capitalise name}}` expenses">{{capitalise name}} ({{count}})</a></li>
+              {{/each}}
+            </ul>
+          </div>
         {{/if}}
       </div>
       <svg viewBox="0 0 48 48" class="js-delete-icon--right icon expense__delete-icon expense__delete-icon--right">

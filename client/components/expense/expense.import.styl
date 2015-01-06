@@ -53,7 +53,7 @@
 
     &__note
         padding: 0 10px 0 0
-        max-width: (4 / 6) * 100%
+        max-width: (2/3) * 100%
         
     &__separator
         flex-grow(1)
@@ -61,7 +61,6 @@
 
     &__amount
         padding: 0 0 0 10px
-        max-width: (1 / 6) * 100%
 
     &__location,
     &__date
@@ -95,9 +94,22 @@
     &__date:before
         content: ''
 
+    &__tags-container
+        position: relative
+
+        &:after
+            content: ''
+            position: absolute
+            top: 1px
+            right: -16px
+            width: 36px
+            height: calc(100% - 1px)
+            background: linear-gradient(right, colour('white') 25%, rgba(255, 255, 255, 0))
+            pointer-events: none
+
     &__tags
-        margin: 10px 0 0 -16px
-        padding: 10px 16px 0
+        margin: 10px 0 -10px -16px
+        padding: 10px 16px
         width: calc(100% + 32px)
         border-top: 1px dashed colour('grey', 'light')
         overflow-x: scroll
@@ -123,18 +135,21 @@
             height: @width
             margin: -(@height/2) 0 0 0
             border: 1px solid colour('grey', 'light')
-
-        &:hover,
+        
         &:focus,
+        &:active
+            &:before
+                background: colour('white')
+                border-color: colour('white')
+                
+        &:focus
+            border-color: colour('grey', 'medium')
+
         &:active
             background: colour('grey', 'medium')
             border-color: colour('grey', 'medium')
             
-            &:before
-                background: colour('white')
-                border-color: colour('white')
-            
-        &--selected
+        &--is-selected
             color: colour('white')
             background: colour('black')
             border-color: colour('black')
