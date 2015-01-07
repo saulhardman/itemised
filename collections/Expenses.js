@@ -46,6 +46,18 @@ Expenses = {
   total: function total(selector) {
     return utils.accumulator(this.all(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
+  tagCounts: function tagCounts() {
+    return this.all({}, { fields: { tags: 1 } }).fetch().reduce(function (tagCounts, expense) {
+      expense.tags.forEach(function (tag) {
+        if (!tagCounts.hasOwnProperty(tag)) {
+          tagCounts[tag] = 1;
+        } else {
+          tagCounts[tag] += 1;
+        }
+      });
+
+      return tagCounts;
+    }, {});
   },
 };
 
