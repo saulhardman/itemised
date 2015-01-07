@@ -6,8 +6,8 @@ Expenses = {
 
     return this.collection.find(selector, options);
   },
-  dailyTotal: function total() {
-    return utils.accumulator(this.daily().fetch(), 'amount');
+  dailyTotal: function total(selector) {
+    return utils.accumulator(this.daily(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
   weekly: function weekly(selector, options) {
     selector = _.extend({
@@ -20,8 +20,8 @@ Expenses = {
 
     return this.collection.find(selector, options);
   },
-  weeklyTotal: function total() {
-    return utils.accumulator(this.weekly().fetch(), 'amount');
+  weeklyTotal: function total(selector) {
+    return utils.accumulator(this.weekly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
   monthly: function monthly(selector, options) {
     selector = _.extend({
@@ -34,8 +34,8 @@ Expenses = {
 
     return this.collection.find(selector, options);
   },
-  monthlyTotal: function total() {
-    return utils.accumulator(this.monthly().fetch(), 'amount');
+  monthlyTotal: function total(selector) {
+    return utils.accumulator(this.monthly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
   all: function all(selector, options) {
     selector = _.extend({}, selector);
@@ -43,8 +43,9 @@ Expenses = {
 
     return this.collection.find(selector, options);
   },
-  total: function total() {
-    return utils.accumulator(this.all().fetch(), 'amount');
+  total: function total(selector) {
+    return utils.accumulator(this.all(selector, { fields: { amount: 1 } }).fetch(), 'amount');
+  },
   },
 };
 
