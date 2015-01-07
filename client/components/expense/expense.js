@@ -1,3 +1,11 @@
+Template.expense.rendered = function () {
+  this.fastClick = FastClick.attach(this.findAll('.js-expense')[0]);
+};
+
+Template.expense.destroyed = function () {
+  this.fastClick.destroy();
+};
+
 Template.expense.helpers({
   hasTags: function () {
     return this.tags.length !== 0;
