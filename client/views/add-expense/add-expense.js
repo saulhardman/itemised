@@ -39,7 +39,7 @@ Template.addExpense.events({
       }),
     });
 
-    Expenses.insert({
+    Expenses.collection.insert({
       createdBy: Meteor.userId(),
       amount: Math.round($amount.val() * 100),
       note: $note.val(),
