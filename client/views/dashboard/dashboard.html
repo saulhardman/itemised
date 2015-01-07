@@ -1,10 +1,10 @@
 <template name="dashboard">
   {{> icons}}
 
-  <section class="dashboard">
+  <section id="js-dashboard" class="dashboard">
     <ul class="totals">
       {{#each totals}}
-        <li>{{name}}: {{amount}}</li>
+        <li>{{name}}: {{currency amount}}</li>
       {{/each}}
     </ul>
 
