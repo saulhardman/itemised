@@ -25,6 +25,8 @@ A meteor app to keep track of your personal expenses in a minimal, itemised list
 - [ ] Listen for click event on tags elements and add tag to tags input
 
 ### Expenses
+- [ ] Add location icon
+- [ ] Add date icon
 - [ ] Transition in newly added expenses
 
 ### Undo menu
@@ -34,5 +36,4 @@ A meteor app to keep track of your personal expenses in a minimal, itemised list
 - [ ] `Cancel` option should close the menu
 
 ### Miscellaneous
-- [ ] Add cross icon SVG to tags within expense view
 - [x] Add container to tag list to correctly position fade out at the right-hand-side
