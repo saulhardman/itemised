@@ -121,29 +121,14 @@
         white-space: nowrap
 
     &__tag
-        font-scale('body', '1')
         display: inline-block
+        margin: 0 8px 0 0
+        font-scale('body', '1')
         
     &__tag-link
         position: relative
-        padding: 5px 6px 5px 25px
+        padding: 5px 6px 5px
         border: 1px solid colour('grey', 'light')
-        
-        &:before
-            content: ''
-            position: absolute
-            top: 50%
-            left: 7px
-            width: 12px
-            height: @width
-            margin: -(@height/2) 0 0 0
-            border: 1px solid colour('grey', 'light')
-        
-        &:focus,
-        &:active
-            &:before
-                background: colour('white')
-                border-color: colour('white')
                 
         &:focus
             border-color: colour('grey', 'medium')
@@ -160,3 +145,15 @@
             &:before
                 background: colour('white')
                 border-color: colour('white')
+
+    &__tag-count
+        display: inline-block
+        padding: 2px 0 0
+        width: 20px
+        height: @width
+        text-align: center
+        border: 1px dotted colour('grey', 'medium')
+        border-radius: 50%
+        
+        &--is-selected
+            border-color: colour('white')
