@@ -20,6 +20,20 @@ ul
     list-style: none
 
 /**
+ * Touch elements
+ */
+
+a,
+label,
+select,
+button,
+[type="radio"],
+[type="checkbox"]
+    cursor: pointer
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+    -webkit-tap-highlight-color: transparent
+
+/**
  * Links
  */
 
@@ -27,7 +41,6 @@ a
     display: inline-block
 
     &,
-    &:hover,
     &:active,
     &:focus
         color: currentColor
@@ -55,16 +68,9 @@ button
         display: table
         clear: both
 /**
- * Form elements
+ * Input elements
  */
-
-label,
-select,
-button,
-[type="radio"],
-[type="checkbox"]
-    cursor: pointer
-
+ 
 [type="text"],
 [type="number"],
 [type="search"],
