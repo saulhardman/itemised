@@ -1,7 +1,7 @@
 <template name="expense">
   <article class="js-expense expense">
     <div class="js-container">
-      <svg viewBox="0 0 48 48" class="js-delete-icon--left icon expense__delete-icon expense__delete-icon--left">
+      <svg class="js-delete-icon--left icon expense__delete-icon expense__delete-icon--left">
         <use xlink:href="#icon-delete"></use>
       </svg>
       <div class="js-content expense__content">
@@ -11,9 +11,19 @@
           <p class="expense__amount">{{currency amount}}</p>
         </div>
         {{#if location}}
-            <p class="expense__location">{{location}}</p>
+            <p class="expense__location">
+              <svg class="icon expense__location-icon">
+                <use xlink:href="#icon-location"></use>
+              </svg>
+              {{location}}
+            </p>
         {{/if}}
-        <time class="expense__date" datetime="{{date}}">{{moment date format="dddd, Do [of] MMMM [at] hA"}}</time>
+        <time class="expense__date" datetime="{{date}}">
+          <svg class="icon expense__date-icon">
+            <use xlink:href="#icon-date"></use>
+          </svg>
+          {{moment date format="dddd, Do [of] MMMM [at] hA"}}
+        </time>
         {{#if hasTags}}
           <div class="expense__tags-container">
             <ul class="js-tags expense__tags">
@@ -22,7 +32,7 @@
           </div>
         {{/if}}
       </div>
-      <svg viewBox="0 0 48 48" class="js-delete-icon--right icon expense__delete-icon expense__delete-icon--right">
+      <svg class="js-delete-icon--right icon expense__delete-icon expense__delete-icon--right">
         <use xlink:href="#icon-delete"></use>
       </svg>
     </div>

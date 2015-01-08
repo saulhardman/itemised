@@ -34,6 +34,20 @@
             
         &--is-active
             fill: colour('black')
+            
+    &__date-icon,
+    &__location-icon
+        float: left
+        
+    &__date-icon
+        margin: 5px 5px 0 1px
+        width: 14px
+        height: 14px
+        
+    &__location-icon
+        margin: 4px 4px 0 0
+        width: 16px
+        height: 16px
 
     &__content
         position: relative
@@ -71,31 +85,6 @@
         color: colour('grey')
         font-size: rem(12)
         line-height: rem(24)
-
-        &:before
-            display: inline-block
-            vertical-align: middle
-            margin: -3px 6px 0 0
-            width: 10px
-            height: 10px
-            color: colour('black')
-            font-size: rem(20)
-            background-color: currentColor
-
-    &__location
-        clear: both
-
-        &--empty
-
-            &,
-            &:before
-                color: colour('grey', 'light')
-
-        &:before
-            content: ''
-
-    &__date:before
-        content: ''
 
     &__tags-container
         position: relative
