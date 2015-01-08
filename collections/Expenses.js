@@ -6,7 +6,7 @@ Expenses = {
 
     return this.collection.find(selector, options);
   },
-  dailyTotal: function total(selector) {
+  dailyTotal: function dailyTotal(selector) {
     return utils.accumulator(this.daily(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
   weekly: function weekly(selector, options) {
@@ -20,7 +20,7 @@ Expenses = {
 
     return this.collection.find(selector, options);
   },
-  weeklyTotal: function total(selector) {
+  weeklyTotal: function weeklyTotal(selector) {
     return utils.accumulator(this.weekly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
   monthly: function monthly(selector, options) {
@@ -36,6 +36,20 @@ Expenses = {
   },
   monthlyTotal: function total(selector) {
     return utils.accumulator(this.monthly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
+  },
+  yearly: function yearly(selector, options) {
+    selector = _.extend({
+      date: {
+        $gte: utils.getFirstDayOfTheYear(),
+        $lt: utils.getLastDayOfTheYear(),
+      }
+    }, selector);
+    options = _.extend({ sort: { date: -1 } }, options);
+
+    return this.collection.find(selector, options);
+  },
+  yearlyTotal: function yearlyTotal(selector) {
+    return utils.accumulator(this.yearly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
   all: function all(selector, options) {
     selector = _.extend({}, selector);
@@ -58,6 +72,35 @@ Expenses = {
 
       return tagCounts;
     }, {});
+  },
+  totals: function totals(selector) {
+    return [
+      {
+        name: 'today',
+        title: 'Today',
+        amount: Expenses.dailyTotal(selector)
+      },
+      {
+        name: 'weekly',
+        title: 'This Week',
+        amount: Expenses.weeklyTotal(selector)
+      },
+      {
+        name: 'monthly',
+        title: 'This Month',
+        amount: Expenses.monthlyTotal(selector)
+      },
+      {
+        name: 'yearly',
+        title: 'This Year',
+        amount: Expenses.yearlyTotal(selector)
+      },
+      {
+        name: 'total',
+        title: 'All Time',
+        amount: Expenses.total(selector)
+      },
+    ];
   },
 };
 

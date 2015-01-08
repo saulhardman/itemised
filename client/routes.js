@@ -1,24 +1,7 @@
 Router.route('/', function () {
   var expenses = Expenses.all().fetch();
   var tagCounts = Expenses.tagCounts();
-  var totals = [
-    {
-      name: 'total',
-      amount: Expenses.total()
-    },
-    {
-      name: 'today',
-      amount: Expenses.dailyTotal()
-    },
-    {
-      name: 'weekly',
-      amount: Expenses.weeklyTotal()
-    },
-    {
-      name: 'monthly',
-      amount: Expenses.monthlyTotal()
-    },
-  ];
+  var totals = Expenses.totals();
 
   expenses.forEach(function (value) {
     value.tags = value.tags.map(function (value) {
@@ -49,26 +32,7 @@ Router.route('/expenses/(.*)', function () {
   var selector = { tags: { $in: tags } };
   var expenses = Expenses.all(selector).fetch();
   var tagCounts = Expenses.tagCounts();
-  var totals = [
-    {
-      name: 'total',
-      amount: Expenses.total(selector)
-    },
-    {
-      name: 'today',
-      amount: Expenses.dailyTotal(selector)
-    },
-    {
-      name: 'weekly',
-      amount: Expenses.weeklyTotal(selector)
-    },
-    {
-      name: 'monthly',
-      amount: Expenses.monthlyTotal(selector)
-    },
-  ];
-
-  console.log('selector', selector, tags);
+  var totals = Expenses.totals(selector);
 
   expenses.forEach(function (value) {
     value.tags = value.tags.map(function (value) {
