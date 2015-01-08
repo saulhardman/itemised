@@ -1,5 +1,5 @@
 Template.expense.rendered = function () {
-  this.fastClick = FastClick.attach(this.findAll('.js-expense')[0]);
+  this.fastClick = FastClick.attach(this.$('.js-expense')[0]);
 };
 
 Template.expense.destroyed = function () {
