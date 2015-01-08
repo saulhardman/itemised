@@ -2,11 +2,7 @@
   {{> icons}}
 
   <section id="js-dashboard" class="dashboard">
-    <ul class="totals">
-      {{#each totals}}
-        <li>{{name}}: {{currency amount}}</li>
-      {{/each}}
-    </ul>
+    {{> totals}}
 
     <div class="expenses">
       {{#each expenses}}
