@@ -15,10 +15,10 @@ A meteor app to keep track of your personal expenses in a minimal, itemised list
 - [ ] Animate expenses in and out
 
 ### Undo menu
-- [ ] On deleting an expense, keep a temporary record of it
-- [ ] Open menu on shake gesture
-- [ ] `Undo delete` option should restore the previously deleted expense
-- [ ] `Cancel` option should close the menu
+- [x] On deleting an expense, keep a temporary record of it
+- [x] Open menu on shake gesture
+- [x] `Undo delete` option should restore the previously deleted expense
+- [x] `Cancel` option should close the menu
 
 ### Global totals
 - [x] Add the total for the current week
