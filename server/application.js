@@ -5,16 +5,16 @@ Meteor.startup(function () {
   var i;
 
   if (count < minimum) {
-    expense = {
-      note: 'This is an example of a note',
-      amount: '100',
-      date: new Date(),
-      createdBy: '4kRGPMn3vGByF6Rmh',
-      tags: ['food', 'essentials', 'drinks', 'leisure', 'activity'],
-    };
-
     for (i = 0; i < minimum - count; i++) {
-      Expenses.collection.insert(expense);
+      Expenses.collection.insert({
+        note: _.sample(['Cheese', 'Sushi', 'Sandwich', 'iPhone Case', 'Inner Tube']),
+        amount: Math.round(Math.random() * 1000),
+        location: _.sample(['Tesco', 'Pret a Manger', 'Stokey Bear\'s', 'Waitrose', 'Yo! Sushi', '']),
+        date: new Date(2015, 0, Math.ceil(Math.random() * new Date().getDate()), Math.round(Math.random() * 24)),
+        createdBy: '4kRGPMn3vGByF6Rmh',
+        tags: _.sample(['food', 'essentials', 'drinks', 'leisure', 'activity'], Math.ceil(Math.random() * 5)),
+        isDeleted: false,
+      });
     }
   }
 
