@@ -1,7 +1,10 @@
 Expenses = {
+  defaultSelector: {
+    isDeleted: false,
+  },
   collection: new Mongo.Collection('expenses'),
   daily: function daily(selector, options) {
-    selector = _.extend({ date: { $gte: utils.getToday() } }, selector);
+    selector = _.extend({ date: { $gte: utils.getToday() } }, this.defaultSelector, selector);
     options = _.extend({ sort: { date: -1 } }, options);
 
     return this.collection.find(selector, options);
@@ -15,7 +18,7 @@ Expenses = {
         $gte: utils.getFirstDayOfTheWeek(),
         $lt: utils.getLastDayOfTheWeek(),
       }
-    }, selector);
+    }, this.defaultSelector, selector);
     options = _.extend({ sort: { date: -1 } }, options);
 
     return this.collection.find(selector, options);
@@ -29,7 +32,7 @@ Expenses = {
         $gte: utils.getFirstDayOfTheMonth(),
         $lt: utils.getLastDayOfTheMonth(),
       }
-    }, selector);
+    }, this.defaultSelector, selector);
     options = _.extend({ sort: { date: -1 } }, options);
 
     return this.collection.find(selector, options);
@@ -43,7 +46,7 @@ Expenses = {
         $gte: utils.getFirstDayOfTheYear(),
         $lt: utils.getLastDayOfTheYear(),
       }
-    }, selector);
+    }, this.defaultSelector, selector);
     options = _.extend({ sort: { date: -1 } }, options);
 
     return this.collection.find(selector, options);
@@ -52,7 +55,7 @@ Expenses = {
     return utils.accumulator(this.yearly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
   },
   all: function all(selector, options) {
-    selector = _.extend({}, selector);
+    selector = _.extend({}, this.defaultSelector, selector);
     options = _.extend({ sort: { date: -1 } }, options);
 
     return this.collection.find(selector, options);

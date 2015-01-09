@@ -16,7 +16,7 @@ Template.expense.events({
   'touchstart .js-tags, touchmove .js-tags, touchend .js-tags': function (event) {
     event.stopPropagation();
   },
-  'touchstart .js-expense': function (event, template) {
+  'touchstart .js-expense': function (event) {
     var touch;
 
     if (SlideToDelete.active) {
@@ -32,12 +32,12 @@ Template.expense.events({
       scrollPosition: touch.clientY,
     });
   },
-  'touchmove .js-expense': function (event, template) {
+  'touchmove .js-expense': function (event) {
     if (!this.slideToDelete.isDestroyed) {
       this.slideToDelete.move(event);
     }
   },
-  'touchend .js-expense': function (event, template) {
+  'touchend .js-expense': function (event) {
     if (!this.slideToDelete.isDestroyed) {
       this.slideToDelete.close(this._id);
     }
@@ -47,7 +47,7 @@ Template.expense.events({
 var SlideToDelete = function (element, options) {
   this.element = element;
   this.$element = $(element);
-
+  
   this.startedAt = options.startedAt;
   this.scrollPosition = options.scrollPosition;
 
@@ -147,7 +147,13 @@ SlideToDelete.prototype = {
   },
   destroy: function destroy(id, remove) {
     if (remove) {
-      Expenses.collection.remove(id);
+      Session.set('deleted', (Session.get('deleted') || []).concat([id]));
+
+      Expenses.collection.update({
+        _id: id,
+      }, {
+        $set: { isDeleted: true },
+      });
     }
 
     delete this.element;

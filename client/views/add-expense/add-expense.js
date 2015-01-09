@@ -50,6 +50,7 @@ Template.addExpense.events({
       }).filter(function (value) {
         return value !== '';
       }),
+      isDeleted: false,
     });
 
     Router.go('/');
