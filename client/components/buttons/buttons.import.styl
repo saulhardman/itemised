@@ -1,16 +1,17 @@
+height = 64
+
 .button
     display: block
-    height: 44px
+    height: height * 1px
     text-align: center
     background: colour('white')
     border: 0
     
     &--functional
         color: colour('white')
-        text-transform: uppercase
+        line-height: rem(height)
         background: colour('black')
         
-        &:hover,
         &:focus,
         &:active
             background: colour('yellow')
