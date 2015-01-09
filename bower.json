@@ -1,0 +1,8 @@
+{
+  "name": "itemised",
+  "version": "0.0.1",
+  "dependencies": {
+    "shake.js": "~1.1.0"
+  },
+  "private": true
+}
