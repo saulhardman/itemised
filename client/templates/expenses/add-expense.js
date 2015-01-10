@@ -33,7 +33,7 @@ Template.addExpense.events({
       note: $note.val(),
       date: date,
       location: $location.val(),
-      tags: $tags.val().split(',').map(function (value) {
+      tagNames: $tags.val().split(',').map(function (value) {
         return value.trim().toLowerCase();
       }).filter(function (value) {
         return value !== '';
