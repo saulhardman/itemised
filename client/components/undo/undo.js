@@ -78,13 +78,7 @@ Undo.prototype = {
 
     Session.set('deleted', deleted);
 
-    Expenses.collection.update({
-      _id: id
-    }, {
-      $set: {
-        isDeleted: false
-      }
-    });
+    Meteor.call('expenseRestore', id);
 
     this.close();
   

@@ -1,123 +1,72 @@
-Expenses = {
-  defaultSelector: {
-    isDeleted: false,
-  },
-  collection: new Mongo.Collection('expenses'),
-  daily: function daily(selector, options) {
-    selector = _.extend({ date: { $gte: utils.getToday() } }, this.defaultSelector, selector);
-    options = _.extend({ sort: { date: -1 } }, options);
+Expenses = new Mongo.Collection('expenses');
 
-    return this.collection.find(selector, options);
-  },
-  dailyTotal: function dailyTotal(selector) {
-    return utils.accumulator(this.daily(selector, { fields: { amount: 1 } }).fetch(), 'amount');
-  },
-  weekly: function weekly(selector, options) {
-    selector = _.extend({
-      date: {
-        $gte: utils.getFirstDayOfTheWeek(),
-        $lt: utils.getLastDayOfTheWeek(),
-      }
-    }, this.defaultSelector, selector);
-    options = _.extend({ sort: { date: -1 } }, options);
-
-    return this.collection.find(selector, options);
-  },
-  weeklyTotal: function weeklyTotal(selector) {
-    return utils.accumulator(this.weekly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
-  },
-  monthly: function monthly(selector, options) {
-    selector = _.extend({
-      date: {
-        $gte: utils.getFirstDayOfTheMonth(),
-        $lt: utils.getLastDayOfTheMonth(),
-      }
-    }, this.defaultSelector, selector);
-    options = _.extend({ sort: { date: -1 } }, options);
-
-    return this.collection.find(selector, options);
-  },
-  monthlyTotal: function total(selector) {
-    return utils.accumulator(this.monthly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
-  },
-  yearly: function yearly(selector, options) {
-    selector = _.extend({
-      date: {
-        $gte: utils.getFirstDayOfTheYear(),
-        $lt: utils.getLastDayOfTheYear(),
-      }
-    }, this.defaultSelector, selector);
-    options = _.extend({ sort: { date: -1 } }, options);
-
-    return this.collection.find(selector, options);
-  },
-  yearlyTotal: function yearlyTotal(selector) {
-    return utils.accumulator(this.yearly(selector, { fields: { amount: 1 } }).fetch(), 'amount');
-  },
-  all: function all(selector, options) {
-    selector = _.extend({}, this.defaultSelector, selector);
-    options = _.extend({ sort: { date: -1 } }, options);
-
-    return this.collection.find(selector, options);
-  },
-  total: function total(selector) {
-    return utils.accumulator(this.all(selector, { fields: { amount: 1 } }).fetch(), 'amount');
-  },
-  tagCounts: function tagCounts() {
-    return this.all({}, { fields: { tags: 1 } }).fetch().reduce(function (tagCounts, expense) {
-      expense.tags.forEach(function (tag) {
-        if (!tagCounts.hasOwnProperty(tag)) {
-          tagCounts[tag] = 1;
-        } else {
-          tagCounts[tag] += 1;
-        }
-      });
-
-      return tagCounts;
-    }, {});
-  },
-  totals: function totals(selector) {
-    return [
-      {
-        name: 'today',
-        title: 'Today',
-        amount: Expenses.dailyTotal(selector)
-      },
-      {
-        name: 'weekly',
-        title: 'This Week',
-        amount: Expenses.weeklyTotal(selector)
-      },
-      {
-        name: 'monthly',
-        title: 'This Month',
-        amount: Expenses.monthlyTotal(selector)
-      },
-      {
-        name: 'yearly',
-        title: 'This Year',
-        amount: Expenses.yearlyTotal(selector)
-      },
-      {
-        name: 'total',
-        title: 'All Time',
-        amount: Expenses.total(selector)
-      },
-    ];
-  },
-};
-
-Expenses.collection.allow({
-  insert: function (userId, expense) {
-    // return expense.createdBy === userId;
+Expenses.allow({
+  insert: function () {
     return true;
   },
-  remove: function (userId, expense) {
-    // return expense.createdBy === userId;
+  remove: function () {
     return true;
   },
-  update: function (userId, expense) {
-    // return expense.createdBy === userId;
+  update: function () {
     return true;
   }
+});
+
+Meteor.methods({
+  expenseInsert: function tagInsert(expenseAttributes) {
+    var tagNames = expenseAttributes.tagNames;
+    var tagIds = [];
+
+    if (Array.isArray(tagNames) && tagNames.length > 0) {
+      tagIds = tagNames.map(function (tagName) {
+        return Meteor.call('tagInsert', tagName);
+      });
+    }
+
+    _.extend(expenseAttributes, {
+      tagIds: tagIds,
+      userId: Meteor.userId(),
+      isDeleted: false,
+    });
+
+    return Expenses.insert(expenseAttributes);
+  },
+  expenseDelete: function expenseDelete(expenseId) {
+    var expense = Expenses.findOne(expenseId);
+
+    Expenses.update(expenseId, {
+      $set: {
+        isDeleted: true,
+      }
+    });
+
+    expense.tagIds.forEach(function (tagId) {
+      Tags.update(tagId, {
+        $inc: {
+          count: -1
+        }
+      });
+    });
+
+    return expenseId;
+  },
+  expenseRestore: function expenseRestore(expenseId) {
+    var expense = Expenses.findOne(expenseId);
+
+    Expenses.update(expenseId, {
+      $set: {
+        isDeleted: false,
+      }
+    });
+
+    expense.tagIds.forEach(function (tagId) {
+      Tags.update(tagId, {
+        $inc: {
+          count: 1
+        }
+      });
+    });
+
+    return expenseId;
+  },
 });

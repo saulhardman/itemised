@@ -28,19 +28,7 @@ Template.addExpense.events({
     
     date.setMinutes($time.val().substring(3, 5));
 
-    console.log({
-      createdBy: Meteor.userId(),
-      amount: Math.round($amount.val() * 100),
-      note: $note.val(),
-      date: date,
-      location: $location.val(),
-      tags: $tags.val().split(',').map(function (value) {
-        return value.trim();
-      }),
-    });
-
-    Expenses.collection.insert({
-      createdBy: Meteor.userId(),
+    Meteor.call('expenseInsert', {
       amount: Math.round($amount.val() * 100),
       note: $note.val(),
       date: date,
@@ -50,7 +38,6 @@ Template.addExpense.events({
       }).filter(function (value) {
         return value !== '';
       }),
-      isDeleted: false,
     });
 
     Router.go('/');

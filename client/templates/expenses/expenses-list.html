@@ -1,0 +1,17 @@
+<template name="expensesList">
+  {{> icons}}
+
+  <section id="js-expenses-list" class="expenses-list">
+    {{> totals}}
+
+    <div class="expenses">
+      {{#each expenses}}
+        {{> expense}}
+      {{/each}}
+    </div>
+
+    {{> undo}}
+
+    <a class="button button--functional expenses-list__add-expense-button" href="/expenses/add">Add Expense</a>
+  </section>
+</template>

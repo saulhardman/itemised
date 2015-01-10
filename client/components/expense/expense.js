@@ -47,7 +47,7 @@ Template.expense.events({
 var SlideToDelete = function (element, options) {
   this.element = element;
   this.$element = $(element);
-  
+
   this.startedAt = options.startedAt;
   this.scrollPosition = options.scrollPosition;
 
@@ -149,11 +149,7 @@ SlideToDelete.prototype = {
     if (remove) {
       Session.set('deleted', (Session.get('deleted') || []).concat([id]));
 
-      Expenses.collection.update({
-        _id: id,
-      }, {
-        $set: { isDeleted: true },
-      });
+      Meteor.call('expenseDelete', id);
     }
 
     delete this.element;
