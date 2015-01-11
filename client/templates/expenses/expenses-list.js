@@ -5,3 +5,12 @@ Template.expensesList.rendered = function () {
 Template.expensesList.destroyed = function () {
   this.fastClick.destroy();
 };
+
+Template.expensesList.helpers({
+  isFiltered: function isFiltered() {
+    return this.tags.length > 0;
+  },
+  filteredTags: function filteredTags() {
+    return this.tags.map(utils.capitalise).join(', ');
+  },
+});

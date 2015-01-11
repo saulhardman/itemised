@@ -4,6 +4,10 @@
   <section id="js-expenses-list" class="expenses-list">
     {{> totals}}
 
+    {{#if isFiltered}}
+      <p class="expenses-list__filters">Filtering by: {{filteredTags}}.</p>
+    {{/if}}
+
     <div class="expenses">
       {{#each expenses}}
         {{> expense}}
