@@ -1,13 +1,30 @@
-.undo-menu
+.undo
     position: fixed
-    top: 100%
+    top: 0
     left: 0
-    z-index: 4
+    z-index: 3
+    visibility: hidden
     width: 100%
-    text-align: center
-    background: colour('black')
+    height: 100%
+    background-color: rgba(20, 20, 20, 0)
+    transition: background-color .8s, visibility 0 linear .8s
     
-    &__item
+    &--is-open
+        visibility: visible
+        background-color: rgba(20, 20, 20, .6)
+        transition: background-color .8s
+    
+    &__menu
+        text-align: center
+        background: colour('black')
+        transform: translateY(-100%)
+        transition: transform .8s
+        
+    &--is-open__menu
+        transform: none
+        transition: transform .8s
+    
+    &__menu-item
         
         & + &
             border-top: 1px dashed colour('white')

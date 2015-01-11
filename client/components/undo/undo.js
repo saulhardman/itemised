@@ -9,9 +9,8 @@ var Undo = function (template) {
 Undo.prototype = {
   isOpen: false,
   init: function init() {
-    this.$element = this.template.$('#js-undo-menu');
-
-    this.height = this.$element.height();
+    this.$element = this.template.$('#js-undo');
+    this.$menu = this.template.$('#js-undo-menu');
 
     this.fastClick = FastClick.attach(this.$element[0]);
   
@@ -51,9 +50,9 @@ Undo.prototype = {
   open: function open() {
     this.isOpen = true;
 
-    $.Velocity(this.$element, {
-      translateY: -this.height
-    });
+    this.$element.addClass('undo--is-open');
+
+    this.$menu.addClass('undo--is-open__menu');
   
     return this;
   },
@@ -62,13 +61,13 @@ Undo.prototype = {
       return;
     }
 
-    $.Velocity(this.$element, {
-      translateY: [0, -this.height]
-    }, {
-      complete: function () {
-        this.isOpen = false;
-      }.bind(this)
-    });
+    this.$element.removeClass('undo--is-open').on(utils.transitionEnd, function () {
+      this.$element.off(utils.transitionEnd);
+
+      this.isOpen = false;
+    }.bind(this));
+
+    this.$menu.removeClass('undo--is-open__menu');
   
     return this;
   },
@@ -106,10 +105,16 @@ Template.undo.destroyed = function () {
 };
 
 Template.undo.events({
-  'click #js-undo': function (event, template) {
+  'touchstart, touchmove, touchend, click': function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    return false;
+  },
+  'click #js-undo-button': function (event, template) {
     template.undo.onClickUndo(event);
   },
-  'click #js-cancel': function (event, template) {
+  'click #js-cancel-button': function (event, template) {
     template.undo.onClickCancel(event);
   },
 });
