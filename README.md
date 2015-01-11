@@ -13,6 +13,10 @@ A meteor app to keep track of your personal expenses in a minimal, itemised list
 - [x] Add location icon
 - [x] Add date icon
 - [ ] Animate expenses in and out
+- [ ] Make expenses editable
+
+### Search
+- [ ] Add search functionality
 
 ### Undo menu
 - [x] On deleting an expense, keep a temporary record of it
