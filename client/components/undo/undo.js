@@ -23,6 +23,7 @@ Undo.prototype = {
   
     delete this.template;
     delete this.$element;
+    delete this.$menu;
 
     return this;
   },
