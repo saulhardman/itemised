@@ -31,6 +31,9 @@ A meteor app to keep track of your personal expenses in a minimal, itemised list
 ### Search
 - [ ] Add search functionality
 
+### Optimisation
+- [ ] Figure out a better way to deal with tag filtering routes
+
 ### Undo menu
 - [x] On deleting an expense, keep a temporary record of it
 - [x] Open menu on shake gesture
