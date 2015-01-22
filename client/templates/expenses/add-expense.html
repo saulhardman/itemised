@@ -28,7 +28,7 @@
       <ul class="add-expense__tags">
         {{#each tags}}
           <li class="tag">
-            <a class="js-tag-link js-tag-link--{{name}} tag__link"><span class="js-tag-name">{{capitalise name}}</span> <span class="tag__count">{{count}}</span></a>
+            <a class="js-tag-link js-tag-link--{{name}} tag__link"><span class="js-tag-name">{{prettyName name}}</span> <span class="tag__count">{{count}}</span></a>
           </li>
         {{/each}}
       </ul>

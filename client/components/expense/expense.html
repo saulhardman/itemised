@@ -27,7 +27,7 @@
         {{#if hasTags}}
           <div class="expense__tags-container">
             <ul class="js-tags expense__tags">
-              {{#each tags}}<li class="tag"><a class="js-tag-link tag__link{{#if selected}} tag__link--is-selected{{/if}}" href="{{href}}" title="Show all `{{capitalise name}}` expenses">{{capitalise name}} <span class="tag__count{{#if selected}} tag__count--is-selected{{/if}}">{{count}}</span></a></li>{{/each}}
+              {{#each tags}}<li class="tag"><a class="js-tag-link tag__link{{#if selected}} tag__link--is-selected{{/if}}" href="{{href}}" title="Show all `{{prettyName name}}` expenses">{{prettyName name}} <span class="tag__count{{#if selected}} tag__count--is-selected{{/if}}">{{count}}</span></a></li>{{/each}}
             </ul>
           </div>
         {{/if}}
