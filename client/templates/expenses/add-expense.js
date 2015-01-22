@@ -33,14 +33,57 @@ Template.addExpense.events({
       note: $note.val(),
       date: date,
       location: $location.val(),
-      tagNames: $tags.val().split(',').map(function (value) {
-        return value.trim().toLowerCase();
-      }).filter(function (value) {
-        return value !== '';
-      }),
+      tagNames: _.compact(_.uniq($tags.val().split(',').map(function (value) {
+        return value.trim().toLowerCase().split(' ').map(function (value) {
+          return value.trim();
+        }).join('-');
+      })))
     });
 
     Router.go('/');
+
+    return false;
+  },
+  'input .js-expense-tags': function (e, template) {
+    var $this = $(e.currentTarget);
+    var names = _.compact($this.val().split(',').map(function (value) {
+      return value.trim().toLowerCase().split(' ').map(function (value) {
+        return value.trim();
+      }).join('-');
+    }));
+    var $tags = template.$('.js-tag-link');
+
+    $tags.removeClass('tag__link--is-selected').filter(names.map(function (value) {
+      return '.js-tag-link--' + value;
+    }).join(', ')).addClass('tag__link--is-selected');
+  },
+  'click .js-tag-link': function (e, template) {
+    e.preventDefault();
+
+    var $this = $(e.currentTarget);
+    var name = $this.find('.js-tag-name').text();
+    var $tags = template.$('#tags');
+    var names = _.compact($tags.val().split(',').map(function (value) { return value.trim(); }));
+    var index;
+    var value;
+
+    if (names.indexOf(name) > -1) {
+      names = _.without(names, name);
+      
+      $this.removeClass('tag__link--is-selected');
+    } else {
+      names.push(name);
+
+      $this.addClass('tag__link--is-selected');
+    }
+
+    value = names.join(', ');
+
+    if (names.length > 0) {
+      value += ', ';
+    }
+
+    $tags.val(value).focus();
 
     return false;
   }

@@ -25,6 +25,13 @@
         <label class="add-expense-form__label" for="tags" id="tags-label">Tags</label>
         <input aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags add-expense-form__input add-expense-form__tags" placeholder="Food, Drinks, Bills">
       </p>
+      <ul class="add-expense__tags">
+        {{#each tags}}
+          <li class="tag">
+            <a class="js-tag-link js-tag-link--{{name}} tag__link"><span class="js-tag-name">{{capitalise name}}</span> <span class="tag__count">{{count}}</span></a>
+          </li>
+        {{/each}}
+      </ul>
       <button class="button button--functional add-expense-form__button">Add</button>
     </form>
   </section>

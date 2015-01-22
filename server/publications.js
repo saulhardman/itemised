@@ -6,10 +6,6 @@ Meteor.publish('expenses', function(options) {
   return Expenses.find({}, options);
 });
 
-// Meteor.publish('totals', function () {
-//   return Expenses.find({}, { field: { amount: 1 } });
-// });
-
-Meteor.publish('tags', function(expenseId) {
-  return Tags.find({});
+Meteor.publish('tags', function() {
+  return Tags.find();
 });
