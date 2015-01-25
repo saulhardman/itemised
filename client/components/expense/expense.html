@@ -8,7 +8,7 @@
         <div class="expense__details">
           <p class="expense__note">{{note}}</p>
           <span class="expense__separator"></span>
-          <p class="expense__amount">{{currency amount}}</p>
+          <p class="expense__amount">{{parseCurrency amount}}</p>
         </div>
         {{#if location}}
             <p class="expense__location">

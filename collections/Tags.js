@@ -17,19 +17,32 @@ Meteor.methods({
     var tag;
 
     if ((tag = Tags.findOne({ name: tagName }))) {
-
-      Tags.update(tag._id, {
-        $inc: {
-          count: 1
-        }
-      });
-
-      return tag._id;
+      return {
+        exists: true,
+        tagId: tag._id,
+      };
     }
 
-    return Tags.insert({
-      name: tagName,
-      count: 1,
+    return {
+      exists: false,
+      tagId: Tags.insert({
+        name: tagName,
+        count: 1,
+      })
+    };
+  },
+  tagIncrement: function tagIncrement(tagId) {
+    return Tags.update(tagId, {
+      $inc: {
+        count: 1
+      }
+    });
+  },
+  tagDecrement: function tagDecrement(tagId) {
+    return Tags.update(tagId, {
+      $inc: {
+        count: -1
+      }
     });
   },
 });

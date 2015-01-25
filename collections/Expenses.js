@@ -13,23 +13,55 @@ Expenses.allow({
 });
 
 Meteor.methods({
-  expenseInsert: function tagInsert(expenseAttributes) {
+  expenseInsert: function expenseInsert(expenseAttributes) {
     var tagNames = expenseAttributes.tagNames;
     var tagIds = [];
 
     if (Array.isArray(tagNames) && tagNames.length > 0) {
       tagIds = tagNames.map(function (tagName) {
-        return Meteor.call('tagInsert', tagName);
+        var result = Meteor.call('tagInsert', tagName);
+
+        if (result.exists) {
+          Meteor.call('tagIncrement', result.tagId);
+        }
+
+        return result.tagId;
       });
     }
 
-    _.extend(expenseAttributes, {
-      tagIds: tagIds,
+    return Expenses.insert({
       userId: Meteor.userId(),
       isDeleted: false,
+      amount: expenseAttributes.amount,
+      note: expenseAttributes.note,
+      date: expenseAttributes.date,
+      location: expenseAttributes.location,
+      tagIds: tagIds,
+    });
+  },
+  expenseUpdate: function expenseUpdate(expense, updatedAttributes) {
+    var tagNames = updatedAttributes.tagNames;
+    var tagIds = [];
+
+    if (Array.isArray(tagNames) && tagNames.length > 0) {
+      tagIds = tagNames.map(function (tagName) {
+        return Meteor.call('tagInsert', tagName).tagId;
+      });
+    }
+
+    _.difference(expense.tagIds, tagIds).forEach(function (tagId) {
+      Meteor.call('tagDecrement', tagId);
     });
 
-    return Expenses.insert(expenseAttributes);
+    return Expenses.update(expense._id, {
+      $set: {
+        amount: updatedAttributes.amount,
+        note: updatedAttributes.note,
+        date: updatedAttributes.date,
+        location: updatedAttributes.location,
+        tagIds: tagIds,
+      }
+    });
   },
   expenseDelete: function expenseDelete(expenseId) {
     var expense = Expenses.findOne(expenseId);

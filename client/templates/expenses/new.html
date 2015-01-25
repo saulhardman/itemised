@@ -1,0 +1,38 @@
+<template name="expenseNew">
+  <section class="view expense-new">
+    <form id="js-expense-new" class="expense-new-form">
+      <p class="expense-new-form__field">
+        <label class="expense-new-form__label" for="amount" id="amount-label">Amount</label>
+        <input aria-labelledby="amount-label" type="number" id="amount" name="amount" class="js-expense-amount expense-new-form__input expense-new-form__amount" placeholder="2.30">
+      </p>
+      <p class="expense-new-form__field">
+        <label class="expense-new-form__label" for="note" id="note-label">Note</label>
+        <input aria-labelledby="note-label" type="text" id="note" name="note" class="js-expense-note expense-new-form__input expense-new-form__note" placeholder="Morning coffee with Sam">
+      </p>
+      <p class="expense-new-form__field">
+        <label class="expense-new-form__label" for="date" id="date-label">Date</label>
+        <input value="{{now.date}}" aria-labelledby="date-label" type="date" id="date" name="date" class="js-expense-date expense-new-form__input expense-new-form__date">
+      </p>
+      <p class="expense-new-form__field">
+        <label class="expense-new-form__label" for="time" id="time-label">Time</label>
+        <input value="{{now.time}}" aria-labelledby="time-label" type="time" id="time" name="time" class="js-expense-time expense-new-form__input expense-new-form__time" step="0.01">
+      </p>
+      <p class="expense-new-form__field">
+        <label class="expense-new-form__label" for="location" id="location-label">Location</label>
+        <input aria-labelledby="location-label" type="text" id="location" name="location" class="js-expense-location expense-new-form__input expense-new-location" placeholder="Stokey Bear's">
+      </p>
+      <p class="expense-new-form__field">
+        <label class="expense-new-form__label" for="tags" id="tags-label">Tags</label>
+        <input aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags expense-new-form__input expense-new-form__tags" placeholder="Food, Drinks, Bills">
+      </p>
+      <ul class="expense-new__tags">
+        {{#each tags}}
+          <li class="tag">
+            <a class="js-tag-link js-tag-link--{{name}} tag__link"><span class="js-tag-name">{{prettyName name}}</span> <span class="tag__count">{{count}}</span></a>
+          </li>
+        {{/each}}
+      </ul>
+      <button class="button button--functional expense-new-form__button">Add</button>
+    </form>
+  </section>
+</template>

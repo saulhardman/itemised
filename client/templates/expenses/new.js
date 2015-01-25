@@ -1,4 +1,4 @@
-Template.addExpense.helpers({
+Template.expenseNew.helpers({
   now: function () {
     var now = new Date();
 
@@ -11,8 +11,8 @@ Template.addExpense.helpers({
   }
 });
 
-Template.addExpense.events({
-  'submit #js-add-expense': function (e) {
+Template.expenseNew.events({
+  'submit #js-expense-new': function (e, template) {
     e.preventDefault();
 
     var $this = $(e.currentTarget);
@@ -88,3 +88,7 @@ Template.addExpense.events({
     return false;
   }
 });
+
+Template.expenseNew.rendered = function () {
+  this.$('.js-expense-tags').trigger('input');
+};
