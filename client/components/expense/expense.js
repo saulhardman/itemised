@@ -4,7 +4,6 @@ var Expense = function (template) {
   return this;
 };
 
-Expense.isActive = false;
 Expense.isScrolling = false;
 
 Expense.prototype = {
@@ -26,18 +25,16 @@ Expense.prototype = {
   
     return this;
   },
-  onTouchStart: function onTouchStart(event) {
+  onTouchStart: function onTouchStart(e) {
     var touch;
 
-    if (Expense.isActive || this.isClosing) {
+    if (this.isClosing) {
       return;
     }
 
     Expense.isScrolling = false;
 
-    Expense.isActive = true;
-
-    touch = event.originalEvent.touches[0];
+    touch = e.originalEvent.touches[0];
 
     this.startedAt = {
       x: touch.clientX,
@@ -46,19 +43,19 @@ Expense.prototype = {
   
     return this;
   },
-  onTouchMove: function onTouchMove(event) {
+  onTouchMove: function onTouchMove(e) {
     if (Expense.isScrolling || this.isClosing) {
       return;
     }
 
-    var touch = event.originalEvent.touches[0];
+    var touch = e.originalEvent.touches[0];
     var distance = touch.clientX - this.startedAt.x;
     var absDistance = Math.abs(distance);
     var scrollDistance = Math.abs(touch.clientY - this.startedAt.y);
 
     if (this.isMoving) {
 
-      event.preventDefault();
+      e.preventDefault();
 
       this.move(touch);
 
@@ -89,8 +86,8 @@ Expense.prototype = {
 
     if (this.isDeletable) {
 
-      this.$container.addClass('expense__container--is-exiting-' + this.direction).css('max-height', 0).one(utils.transitionEnd, function (event) {
-        if (event.originalEvent.propertyName === 'max-height') {
+      this.$container.addClass('expense__container--is-exiting-' + this.direction).css('max-height', 0).one(utils.transitionEnd, function (e) {
+        if (e.originalEvent.propertyName === 'max-height') {
           this.remove();
         }
       }.bind(this));
@@ -149,13 +146,10 @@ Expense.prototype = {
   },
   allowMoving: function allowMoving() {
     Expense.isScrolling = false;
-
-    Expense.isActive = false;
   
     return this;
   },
   reset: function reset() {
-    Expense.isActive = false;
 
     this.isMoving = false;
     this.isDeletable = false;
@@ -172,8 +166,6 @@ Expense.prototype = {
     Session.set('deleted', (Session.get('deleted') || []).concat([id]));
 
     Meteor.call('expenseDelete', id);
-
-    Expense.isActive = false;
 
     this.destroy();
   },
@@ -258,23 +250,19 @@ Template.expense.helpers({
 });
 
 Template.expense.events({
-  // 'click .js-tag-link': function (event) {
-  //   var $tagLink = $(event.currentTarget);
-  //   var $tagCount = $tagLink.find('.expense__tag-count');
-
-  //   $tagLink.toggleClass('expense__tag-link--is-selected');
-  //   $tagCount.toggleClass('expense__tag-count--is-selected');
-  // },
-  'touchstart .js-tags, touchmove .js-tags, touchend .js-tags': function (event) {
-    event.stopPropagation();
+  'click .js-expense': function (e, template) {
+    Router.go('expense.edit', { _id:  template.data._id });
   },
-  'touchstart .js-expense': function (event, template) {
-    template.expense.onTouchStart(event);
+  'touchstart .js-tags, touchmove .js-tags, touchend .js-tags': function (e) {
+    e.stopPropagation();
   },
-  'touchmove .js-expense': function (event, template) {
-    template.expense.onTouchMove(event);
+  'touchstart .js-expense': function (e, template) {
+    template.expense.onTouchStart(e);
   },
-  'touchend .js-expense': function (event, template) {
-    template.expense.onTouchEnd(event);
+  'touchmove .js-expense': function (e, template) {
+    template.expense.onTouchMove(e);
+  },
+  'touchend .js-expense': function (e, template) {
+    template.expense.onTouchEnd(e);
   }
 });
