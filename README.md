@@ -5,19 +5,20 @@ A meteor app to keep track of your personal expenses in a minimal, itemised list
 ## To do
 
 ### Tag suggestions
-- [ ] Provide a list of tags to the `addExpense` view (ordered by count)
-- [ ] Render list of tags
-- [ ] Listen for click event on tags elements and add tag to tags input and mark tag as selected
-- [ ] Break tag out into its own block
+- [x] Provide a list of tags to the `addExpense` view (ordered by count)
+- [x] Render list of tags
+- [x] Listen for click event on tags elements and add tag to tags input and mark tag as selected
+- [x] Break tag out into its own block
 - [ ] Make tags in 'filtered by' list clickable
 
 ### Expenses
 - [x] Add location icon
 - [x] Add date icon
-- [ ] Refactor drag to delete logic
+- [x] Refactor drag to delete logic
 - [ ] Swipe right to edit expense
 - [ ] Only show note and amount by default
 - [ ] Show date, location, and tags on tap
+- [ ] Provide 'back' functionality on the new/edit expense views
 
 ### Animations
 - [ ] Figure out how/when to animate for smoother transitions
