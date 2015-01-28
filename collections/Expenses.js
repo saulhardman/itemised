@@ -53,6 +53,8 @@ Meteor.methods({
       Meteor.call('tagDecrement', tagId);
     });
 
+    Meteor.call('tagClean');
+
     return Expenses.update(expense._id, {
       $set: {
         amount: updatedAttributes.amount,
@@ -79,6 +81,8 @@ Meteor.methods({
         }
       });
     });
+
+    Meteor.call('tagClean');
 
     return expenseId;
   },

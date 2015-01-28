@@ -45,4 +45,7 @@ Meteor.methods({
       }
     });
   },
+  tagClean: function tagClean() {
+    return Tags.remove({ count: 0 });
+  },
 });
