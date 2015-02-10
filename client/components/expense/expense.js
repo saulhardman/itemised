@@ -322,7 +322,7 @@ Template.expense.helpers({
 });
 
 Template.expense.events({
-  'click .js-tag-link': function (e) {
+  'click .js-tag': function (e) {
     e.stopPropagation();
 
     e.preventDefault();
