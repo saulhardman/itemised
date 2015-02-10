@@ -1,24 +1,20 @@
 .expense
     position: relative
     overflow: hidden
-    background: colour('grey', 'medium');
+    padding: 0
+    background: colour('grey', 'light')
+    transition: padding .2s ease-out .2s
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
     -webkit-tap-highlight-color: transparent
-    
-    & + &
-        &:before
-            content: ''
-            position: absolute
-            z-index: 3
-            top: 0
-            left: 0
-            display: block
-            width: 100%
-            border-bottom: 1px dashed colour('black')
+
+    &--is-open
+        padding: 4px
+        transition: padding .2s ease-in
+
+        & + &
+            padding-top: 0
 
     &__container
-        overflow: hidden
-
         &--is-exiting-left,
         &--is-exiting-right
             max-height: 0px
@@ -30,22 +26,22 @@
         &--is-exiting-right
             transform: translateX(100%)
 
-    &__delete-icon
-        size = 48px
+    &__icon
+        size = 36px
         position: absolute
         z-index: 1
         top: 50%
         display: block
-        margin: -(size/2) 0 0
+        margin: -(size / 2) 0 0
         width: size
         height: size
         fill: colour('grey')
-        
-        &--left
-            left: 24px
+
+        &--delete
+            right: 16px
             
-        &--right
-            right: 24px
+        &--edit
+            left: 16px
             
         &--is-active
             fill: colour('black')
@@ -67,7 +63,6 @@
     &__content
         position: relative
         z-index: 2
-        padding: 16px 16px 12px
         
         &--is-reset
             transition: transform .4s
@@ -76,12 +71,18 @@
         display(flex)
         flex-flow(row nowrap)
         align-items(baseline)
-        margin: 0 0 6px
+        padding: 16px 0
 
     &__content,
     &__note,
     &__amount
         background: colour('white')
+
+    &__details,
+    &__location,
+    &__date
+        padding-right: 16px
+        padding-left: 16px
 
     &__note
         padding: 0 8px 0 0
@@ -100,9 +101,13 @@
     &__location,
     &__date
         display: block
+        width: 100%
         color: colour('grey')
         font-size: rem(12)
         line-height: rem(24)
+        
+    &__date
+        padding-bottom: 6px
 
     &__tags-container
         position: relative
@@ -111,18 +116,33 @@
             content: ''
             position: absolute
             top: 1px
-            right: -16px
+            right: 0
             width: 36px
-            height: calc(100% - 1px)
+            height: calc(100% - 2px)
             background: linear-gradient(right, colour('white') 25%, rgba(255, 255, 255, 0))
             pointer-events: none
 
     &__tags
-        margin: 10px 0 -10px -16px
-        padding: 10px 16px
-        width: calc(100% + 32px)
-        border-top: 1px dashed colour('grey', 'light')
+        padding: 10px 16px 16px
+        border: 1px dashed colour('grey', 'light')
+        border-left: 0
+        border-right: 0
+        border-bottom: 0
         overflow-x: scroll
         overflow-scroll: touch
         -webkit-overflow-scroll: touch
         white-space: nowrap
+        
+    &__tag
+        display: inline-block
+
+    &__additional-information
+        overflow: hidden
+        background: colour('white')
+        
+        &--is-hidden
+            position: absolute
+            visibility: hidden
+            
+    &__additional-information-item
+        overflow: hidden

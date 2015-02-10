@@ -26,11 +26,12 @@
         <input aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags expense-new-form__input expense-new-form__tags" placeholder="Food, Drinks, Bills">
       </p>
       <ul class="expense-new__tags">
-        {{#each tags}}
-          <li class="tag">
-            <a class="js-tag-link js-tag-link--{{name}} tag__link"><span class="js-tag-name">{{prettyName name}}</span> <span class="tag__count">{{count}}</span></a>
-          </li>
-        {{/each}}
+        {{#each tags}}<li class="expense-new__tag">
+          <button class="js-tag  js-tag--{{name}} tag">
+            <span class="js-tag-name">{{prettyName name}}</span> 
+            <span class="tag__count">{{count}}</span>
+          </button>
+        </li>{{/each}}
       </ul>
       <button class="button button--functional expense-new-form__button">Add</button>
     </form>

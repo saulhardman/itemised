@@ -1,8 +1,8 @@
 <template name="expense">
-  <article class="js-expense expense">
+  <article data-block-name="expense" class="js-expense expense">
     <div class="js-container">
-      <svg class="js-delete-icon--left icon expense__delete-icon expense__delete-icon--left">
-        <use xlink:href="#icon-delete"></use>
+      <svg data-element-name="icon" class="js-edit-icon icon expense__icon expense__icon--edit">
+        <use xlink:href="#icon-edit"></use>
       </svg>
       <div class="js-content expense__content">
         <div class="expense__details">
@@ -10,29 +10,36 @@
           <span class="expense__separator"></span>
           <p class="expense__amount">{{parseCurrency amount}}</p>
         </div>
-        {{#if location}}
-            <p class="expense__location">
+        <div class="js-additional-information expense__additional-information expense__additional-information--is-hidden">
+          {{#if location}}
+            <p class="js-additional-information-item expense__additional-information-item expense__location">
               <svg class="icon expense__location-icon">
                 <use xlink:href="#icon-location"></use>
               </svg>
               {{location}}
             </p>
-        {{/if}}
-        <time class="expense__date" datetime="{{date}}">
-          <svg class="icon expense__date-icon">
-            <use xlink:href="#icon-date"></use>
-          </svg>
-          {{moment date format="dddd, Do [of] MMMM [at] hA"}}
-        </time>
-        {{#if hasTags}}
-          <div class="expense__tags-container">
-            <ul class="js-tags expense__tags">
-              {{#each tags}}<li class="tag"><a class="js-tag-link tag__link{{#if selected}} tag__link--is-selected{{/if}}" href="{{href}}" title="Show all `{{prettyName name}}` expenses">{{prettyName name}} <span class="tag__count{{#if selected}} tag__count--is-selected{{/if}}">{{count}}</span></a></li>{{/each}}
-            </ul>
-          </div>
-        {{/if}}
+          {{/if}}
+          <time class="js-additional-information-item expense__additional-information-item expense__date" datetime="{{date}}">
+            <svg class="icon expense__date-icon">
+              <use xlink:href="#icon-date"></use>
+            </svg>
+            {{moment date format="dddd, Do [of] MMMM [at] hA"}}
+          </time>
+          {{#if hasTags}}
+            <div class="js-additional-information-item expense__additional-information-item expense__tags-container">
+              <ul class="js-tags expense__tags">
+                {{#each tags}}<li class="expense__tag">
+                  <a href="{{href}}" class="js-tag tag {{#if selected}} tag--is-selected{{/if}}" title="Show all `{{prettyName name}}` expenses">
+                    {{prettyName name}} 
+                    <span class="tag__count{{#if selected}} tag__count--is-selected{{/if}}">{{count}}</span>
+                  </a>
+                </li>{{/each}}
+              </ul>
+            </div>
+          {{/if}}
+        </div>
       </div>
-      <svg class="js-delete-icon--right icon expense__delete-icon expense__delete-icon--right">
+      <svg data-element-name="icon" class="js-delete-icon icon expense__icon expense__icon--delete">
         <use xlink:href="#icon-delete"></use>
       </svg>
     </div>

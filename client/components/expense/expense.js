@@ -8,20 +8,39 @@ Expense.isScrolling = false;
 
 Expense.prototype = {
   moveThreshold: 48,
-  deleteThreshold: 96,
+  deleteThreshold: 68,
   directions: { true: 'right', false: 'left' },
   scrollingThreshold: 12,
   init: function init() {
     this.$element = this.template.$('.js-expense');
     this.$container = this.$element.find('.js-container');
     this.$content = this.$element.find('.js-content');
+    this.$additional = this.$element.find('.js-additional-information');
+    this.$additionalItems = this.$additional.find('.js-additional-information-item');
+    this.additionalItemCount = this.$additionalItems.length;
 
-    this.$container.css('max-height', this.$container.height());
+    this.$additional.data('height', this.$additional.height()).height(0).removeClass('expense__additional-information--is-hidden');
+
+    this.isOpen = false;
+    this.isAnimating = false;
+
+    this.setMaxHeight();
 
     this.isMoving = false;
     this.isClosing = false;
 
     this.fastClick = FastClick.attach(this.$element[0]);
+  
+    return this;
+  },
+  setMaxHeight: function setMaxHeight(additional) {
+    var height = this.$container.height();
+
+    if (typeof additional === 'number') {
+      height += additional;
+    }
+
+    this.$container.css('max-height', height);
   
     return this;
   },
@@ -78,7 +97,13 @@ Expense.prototype = {
       return;
     }
 
-    if (!this.isMoving || this.isClosing) {
+    if (!this.isMoving) {
+      this.toggleAdditionalInformation();
+
+      return;
+    }
+
+    if (this.isClosing) {
       return;
     }
 
@@ -86,11 +111,23 @@ Expense.prototype = {
 
     if (this.isDeletable) {
 
-      this.$container.addClass('expense__container--is-exiting-' + this.direction).css('max-height', 0).one(utils.transitionEnd, function (e) {
-        if (e.originalEvent.propertyName === 'max-height') {
-          this.remove();
-        }
-      }.bind(this));
+      if (this.direction === 'right') {
+
+        this.$container.addClass('expense__container--is-exiting-' + this.direction).one(utils.transitionEnd, function () {
+          Router.go('expense.edit', { _id: this.template.data._id });
+        }.bind(this));
+
+      } else {
+
+        this.$element.removeBlockModifier('is-open');
+
+        this.$container.addClass('expense__container--is-exiting-' + this.direction).css('max-height', 0).one(utils.transitionEnd, function (e) {
+          if (e.originalEvent.propertyName === 'max-height') {
+            this.remove();
+          }
+        }.bind(this));
+
+      }
 
     } else {
 
@@ -100,6 +137,15 @@ Expense.prototype = {
         this.reset();
       }.bind(this));
 
+    }
+  
+    return this;
+  },
+  onTouchCancel: function onTouchCancel(e) {
+    if (Expense.isScrolling) {
+      this.allowMoving();
+
+      return;
     }
   
     return this;
@@ -187,31 +233,27 @@ Expense.prototype = {
 
     this.direction = this.directions[direction];
 
-    this.$icon = this.$element.find('.js-delete-icon--' + this.directions[!direction]).show();
-
-    this.$element.find('.js-delete-icon--' + this.direction).hide();
+    if (this.direction === 'right') {
+      this.$icon = this.$element.find('.js-edit-icon').show();
+      this.$element.find('.js-delete-icon').hide();
+    } else {
+      this.$icon = this.$element.find('.js-delete-icon').show();
+      this.$element.find('.js-edit-icon').hide();
+    }
   
     return this;
   },
   deletable: function deletable() {
-    var classes = this.$icon.attr('class').split(' ');
-
     this.isDeletable = true;
 
-    classes.push('expense__delete-icon--is-active');
-
-    this.$icon.attr('class', classes.join(' '));
+    this.$icon.addElementModifier('is-active');
   
     return this;
   },
   undeletable: function undeletable() {
-    var classes = this.$icon.attr('class').split(' ');
-
     this.isDeletable = false;
 
-    classes.splice(classes.indexOf('expense__delete-icon--is-active'), 1);
-
-    this.$icon.attr('class', classes.join(' ')).css('transform', 'translateX(0)');
+    this.$icon.removeElementModifier('is-active').css('transform', 'translateX(0)');
   
     return this;
   },
@@ -226,6 +268,36 @@ Expense.prototype = {
     var absPosition = Math.abs(position);
   
     return (absPosition - this.deleteThreshold) * sign;
+  },
+  toggleAdditionalInformation: function toggleAdditionalInformation() {
+    if (this.isAnimating) {
+      return this;
+    }
+
+    this.isAnimating = true;
+
+    var duration = 200;
+    var isOpen = this.isOpen;
+
+    this.isOpen = !this.isOpen;
+
+    this.$element.toggleBlockModifier('is-open');
+
+    if (isOpen) {
+      $.Velocity(this.$additional, { height: 0 }, { duration: duration, easing: 'easeInQuad' }).then(function () {
+        this.setMaxHeight();
+
+        this.isAnimating = false;
+      }.bind(this));
+    } else {
+      $.Velocity(this.$additional, { height: this.$additional.data('height') }, { duration: duration, delay: duration, easing: 'easeOutQuad' }).then(function () {
+        this.isAnimating = false;
+      }.bind(this));
+
+      this.setMaxHeight(this.$additional.data('height'));
+    }
+  
+    return this;
   },
 };
 
@@ -250,8 +322,15 @@ Template.expense.helpers({
 });
 
 Template.expense.events({
-  'click .js-expense': function (e, template) {
-    Router.go('expense.edit', { _id:  template.data._id });
+  'click .js-tag-link': function (e) {
+    e.stopPropagation();
+
+    e.preventDefault();
+
+    Router.go($(e.currentTarget).attr('href'));
+
+    return false;
+
   },
   'touchstart .js-tags, touchmove .js-tags, touchend .js-tags': function (e) {
     e.stopPropagation();
@@ -264,5 +343,8 @@ Template.expense.events({
   },
   'touchend .js-expense': function (e, template) {
     template.expense.onTouchEnd(e);
+  },
+  'touchcancel .js-expense': function (e, template) {
+    template.expense.onTouchCancel(e);
   }
 });

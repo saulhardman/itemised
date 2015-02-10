@@ -1,38 +1,39 @@
 .tag
-    display: inline-block
+    position: relative
     margin: 0 8px 0 0
     font-scale('body', '1')
-    
-    &__link
-        position: relative
-        padding: 5px 6px 5px
-        border: 1px solid colour('grey', 'light')
-                
-        &:focus
-            border-color: colour('grey', 'medium')
+    line-height: rem(24)
+    padding: 3px 6px 5px
+    border: 1px solid colour('grey', 'light')
+            
+    &:focus
+        border-color: colour('grey', 'medium')
 
-        &:active
-            background: colour('grey', 'medium')
-            border-color: colour('grey', 'medium')
-            
-        &--is-selected
-            color: colour('white')
-            background: colour('black')
-            border-color: colour('black')
-            
-            &:before
-                background: colour('white')
-                border-color: colour('white')
+    &:active
+        background: colour('grey', 'medium')
+        border-color: colour('grey', 'medium')
+        
+    &--is-selected
+        color: colour('white')
+        background: colour('black')
+        border-color: colour('black')
+        
+        &:before
+            background: colour('white')
+            border-color: colour('white')
 
     &__count
         display: inline-block
-        padding: 2px 0 0
+        vertical-align: middle
+        padding: 2px
         width: 20px
         height: @width
+        font-size: rem(10)
+        line-height: rem(14)
         text-align: center
         border: 1px dotted colour('grey', 'medium')
         border-radius: 50%
         
         &--is-selected,
-        .tag__link:active &
+        .tag:active &
             border-color: colour('white')

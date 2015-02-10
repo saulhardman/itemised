@@ -8,7 +8,7 @@ ExpenseEdit.prototype = {
   init: function init() {
     this.$element = this.template.$('#js-expense-edit');
     this.$tagsInput = this.$element.find('.js-expense-tags');
-    this.$tagLinks = this.$element.find('.js-tag-link');
+    this.$tags = this.$element.find('.js-tag');
     
     this.setTagStates();
 
@@ -44,7 +44,7 @@ ExpenseEdit.prototype = {
 
     return false;
   },
-  onClickTagLink: function onClickTagLink(e) {
+  onClickTag: function onClickTag(e) {
     e.preventDefault();
 
     var $this = $(e.currentTarget);
@@ -55,11 +55,11 @@ ExpenseEdit.prototype = {
     if (names.indexOf(name) > -1) {
       names = _.without(names, name);
       
-      $this.removeClass('tag__link--is-selected');
+      $this.removeClass('tag--is-selected');
     } else {
       names.push(name);
 
-      $this.addClass('tag__link--is-selected');
+      $this.addClass('tag--is-selected');
     }
 
     value = names.join(', ');
@@ -79,16 +79,16 @@ ExpenseEdit.prototype = {
       }).join('-');
     }));
 
-    this.$tagLinks.removeClass('tag__link--is-selected').filter(names.map(function (value) {
-      return '.js-tag-link--' + value;
-    }).join(', ')).addClass('tag__link--is-selected');
+    this.$tags.removeClass('tag--is-selected').filter(names.map(function (value) {
+      return '.js-tag--' + value;
+    }).join(', ')).addClass('tag--is-selected');
   
     return this;
   },
   destroy: function destroy() {
     delete this.$element;
     delete this.$tagsInput;
-    delete this.$tagLinks;
+    delete this.$tags;
   
     return this;
   },
@@ -101,8 +101,8 @@ Template.expenseEdit.events({
   'input .js-expense-tags': function (e, template) {
     template.expenseEdit.setTagStates();
   },
-  'click .js-tag-link': function (e, template) {
-    template.expenseEdit.onClickTagLink(e);
+  'click .js-tag': function (e, template) {
+    template.expenseEdit.onClickTag(e);
   }
 });
 
