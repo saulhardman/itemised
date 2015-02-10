@@ -1,6 +1,6 @@
 var expense;
 var count = Expenses.find({ isDeleted: false }).count();
-var minimum = 5;
+var minimum = 20;
 var i;
 
 if (count < minimum) {
