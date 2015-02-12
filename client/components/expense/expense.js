@@ -12,7 +12,7 @@ Expense.prototype = {
   directions: { true: 'right', false: 'left' },
   scrollingThreshold: 12,
   init: function init() {
-    this.$element = this.template.$('.js-expense');
+    this.$element = $(this.template.firstNode);
     this.$container = this.$element.find('.js-container');
     this.$content = this.$element.find('.js-content');
     this.$additional = this.$element.find('.js-additional-information');
@@ -307,6 +307,29 @@ Template.expense.created = function () {
 
 Template.expense.rendered = function () {
   this.expense.init();
+
+  this.firstNode.parentNode._uihooks = {
+    insertElement: function(node, next) {
+      var $node = $(node).css({ visibility: 'hidden', position: 'absolute' });
+      var height;
+      var $container = $node.find('.js-container')
+        .css({ transform: 'translateX(-100%)' });
+
+      $node.insertBefore(next);
+
+      height = $node.outerHeight();
+
+      $node.height(0).css({ visibility: 'visible', position: 'static' });
+
+      console.log(height);
+      
+      Deps.afterFlush(function() {
+        $.Velocity($node, { height: height }, { duration: 400, easing: 'ease' }).then(function () {
+          $container.velocity({ translateX: ['0%', '-100%'] }, { duration: 400, easing: 'ease' });
+        });
+      });
+    },
+  };
 };
 
 Template.expense.destroyed = function () {
@@ -327,10 +350,23 @@ Template.expense.events({
 
     e.preventDefault();
 
-    Router.go($(e.currentTarget).attr('href'));
+    var query = Router.current().params.query;
+    var tagId = $(e.currentTarget).data('id');
+    var index;
+
+    if (query.hasOwnProperty('tags')) {
+      if ((index = query.tags.indexOf(tagId)) !== -1) {
+        query.tags.splice(index, 1);
+      } else {
+        query.tags.push(tagId);
+      }
+    } else {
+      query.tags = [tagId];
+    }
+
+    Router.go('expense.index', {}, { query: query });
 
     return false;
-
   },
   'touchstart .js-tags, touchmove .js-tags, touchend .js-tags': function (e) {
     e.stopPropagation();

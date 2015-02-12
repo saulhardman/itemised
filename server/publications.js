@@ -6,6 +6,10 @@ Meteor.publish('expenses', function(options) {
   return Expenses.find({}, options);
 });
 
+Meteor.publish('expense', function (expenseId) {
+  return Expenses.find(expenseId);
+});
+
 Meteor.publish('tags', function() {
   return Tags.find();
 });

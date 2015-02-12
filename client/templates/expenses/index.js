@@ -7,10 +7,10 @@ Template.expenseIndex.destroyed = function () {
 };
 
 Template.expenseIndex.helpers({
-  isFiltered: function isFiltered() {
-    return this.tags.length > 0;
-  },
-  filteredTags: function filteredTags() {
-    return this.tags.map(utils.capitalise).join(', ');
-  },
+  // isFiltered: function isFiltered() {
+  //   return this.tags.length > 0;
+  // },
+  // filteredTags: function filteredTags() {
+  //   return this.tags.map(utils.capitalise).join(', ');
+  // },
 });

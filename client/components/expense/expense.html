@@ -29,7 +29,7 @@
             <div class="js-additional-information-item expense__additional-information-item expense__tags-container">
               <ul class="js-tags expense__tags">
                 {{#each tags}}<li class="expense__tag">
-                  <a href="{{href}}" class="js-tag tag {{#if selected}} tag--is-selected{{/if}}" title="Show all `{{prettyName name}}` expenses">
+                  <a data-id="{{_id}}" class="js-tag tag {{#if selected}} tag--is-selected{{/if}}" title="Show all `{{prettyName name}}` expenses">
                     {{prettyName name}} 
                     <span class="tag__count{{#if selected}} tag__count--is-selected{{/if}}">{{count}}</span>
                   </a>

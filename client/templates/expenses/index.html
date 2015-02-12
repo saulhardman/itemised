@@ -4,10 +4,6 @@
   <section id="js-expense-index" class="expense-index">
     {{> totals}}
 
-    {{#if isFiltered}}
-      <p class="expense-index__filters">Filtering by: {{filteredTags}}.</p>
-    {{/if}}
-
     <div class="expenses">
       {{#each expenses}}
         {{> expense}}
