@@ -2,15 +2,27 @@
     height = 64
     display: block
     height: height * 1px
+    line-height: rem(height)
+    color: colour('white')
     text-align: center
-    background: colour('white')
+    background: colour('black')
     border: 0
     
-    &--functional
-        color: colour('white')
-        line-height: rem(height)
+    &--primary
         background: colour('black')
         
-        &:focus,
-        &:active
-            background: colour('highlight')
+    &--secondary
+        background: lighten(colour('black'), 10%)
+        
+    &--tertiary
+        background: lighten(colour('black'), 20%)
+        
+    &--small
+        height = 44
+        height: height * 1px
+        line-height: rem(height)
+
+    .no-touch &:hover,
+    &:active
+        color: colour('grey')
+        background: colour('highlight')

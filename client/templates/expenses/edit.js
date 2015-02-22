@@ -6,11 +6,13 @@ var ExpenseEdit = function (template) {
 
 ExpenseEdit.prototype = {
   init: function init() {
-    this.$element = this.template.$('#js-expense-edit');
+    this.$element = $(this.template.firstNode);
     this.$tagsInput = this.$element.find('.js-expense-tags');
     this.$tags = this.$element.find('.js-tag');
     
     this.setTagStates();
+
+    this.fastClick = FastClick.attach(this.template.firstNode);
 
     return this;
   },
@@ -22,25 +24,17 @@ ExpenseEdit.prototype = {
     var $date = this.$element.find('.js-expense-date');
     var $time = this.$element.find('.js-expense-time');
     var $location = this.$element.find('.js-expense-location');
-    var date = new Date($date.val());
-
-    date.setHours($time.val().substring(0, 2));
-    
-    date.setMinutes($time.val().substring(3, 5));
-
-    Meteor.call('expenseUpdate', this.template.data.expense, {
-      amount: Math.round($amount.val() * 100),
-      note: $note.val(),
-      date: date,
-      location: $location.val(),
-      tagNames: _.compact(_.uniq(this.$tagsInput.val().split(',').map(function (value) {
-        return value.trim().toLowerCase().split(' ').map(function (value) {
-          return value.trim();
-        }).join('-');
-      })))
-    });
+    var date = moment($date.val()).hour($time.val());
 
     Router.go('/');
+
+    Meteor.call('expenseUpdate', this.template.data.expense._id, {
+      amount: Math.round($amount.val() * 100),
+      note: $note.val(),
+      date: date.toDate(),
+      location: $location.val(),
+      tagNames: _.compact(_.uniq(this.$tagsInput.val().split(',').map(utils.slug)))
+    });
 
     return false;
   },
@@ -48,8 +42,8 @@ ExpenseEdit.prototype = {
     e.preventDefault();
 
     var $this = $(e.currentTarget);
-    var name = $this.find('.js-tag-name').text();
-    var names = _.compact(this.$tagsInput.val().split(',').map(function (value) { return value.trim(); }));
+    var name = utils.slug($this.find('.js-tag-name').text());
+    var names = _.compact(this.$tagsInput.val().split(',').map(utils.slug));
     var value;
 
     if (names.indexOf(name) > -1) {
@@ -62,7 +56,7 @@ ExpenseEdit.prototype = {
       $this.addClass('tag--is-selected');
     }
 
-    value = names.join(', ');
+    value = names.map(utils.prettyName).join(', ');
 
     if (names.length > 0) {
       value += ', ';
@@ -73,11 +67,7 @@ ExpenseEdit.prototype = {
     return false;
   },
   setTagStates: function setTagStates() {
-    var names = _.compact(this.$tagsInput.val().split(',').map(function (value) {
-      return value.trim().toLowerCase().split(' ').map(function (value) {
-        return value.trim();
-      }).join('-');
-    }));
+    var names = _.compact(this.$tagsInput.val().split(',').map(utils.slug));
 
     this.$tags.removeClass('tag--is-selected').filter(names.map(function (value) {
       return '.js-tag--' + value;
@@ -86,6 +76,8 @@ ExpenseEdit.prototype = {
     return this;
   },
   destroy: function destroy() {
+    this.fastClick.destroy();
+
     delete this.$element;
     delete this.$tagsInput;
     delete this.$tags;
@@ -93,6 +85,23 @@ ExpenseEdit.prototype = {
     return this;
   },
 };
+
+Template.expenseEdit.helpers({
+  date: function () {
+    return moment(this.expense.date).format('YYYY-MM-DD');
+  },
+  times: function () {
+    var hour = moment(this.expense.date).get('hour');
+
+    return _.map([8, 12, 16, 19, 22], function (value, index) {
+      return {
+        value: value,
+        title: utils.getHumanTime(value),
+        selected: hour === value,
+      };
+    });
+  },
+});
 
 Template.expenseEdit.events({
   'submit #js-expense-edit': function (e, template) {

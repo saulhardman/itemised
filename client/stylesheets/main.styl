@@ -13,11 +13,11 @@
 @require '../components/totals/totals.import'
 @require '../components/tag/tag.import'
 @require '../components/undo/undo.import'
+@require '../components/nav/nav.import'
 
 // Views
 @require '../templates/expenses/index.import'
-@require '../templates/expenses/new.import'
-@require '../templates/expenses/edit.import'
+@require '../templates/expenses/form.import'
 
 html,
 body
@@ -31,3 +31,6 @@ html
 body
     position: relative
     min-height: 100%
+
+.main
+    overflow: hidden

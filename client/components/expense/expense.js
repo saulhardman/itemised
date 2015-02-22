@@ -1,17 +1,35 @@
 var Expense = function (template) {
   this.template = template;
 
+  if (template.data.isDeleted) {
+    this.leftFunction = this.expenseDestroy;
+    this.rightFunction = this.expenseRestore;
+
+    this.leftFunction.requiresConfirmation = true;
+    this.leftFunction.confirmation = this.expenseDestroyConfirm;
+  } else {
+    this.leftFunction = this.expenseDelete;
+    this.rightFunction = this.expenseEdit;
+  }
+
+  this.position = 0;
+  this.iconPosition = 0;
+  this.isOpen = false;
+  this.isAnimating = false;
+  this.isMoving = false;
+  this.isClosing = false;
+
   return this;
 };
 
 Expense.isScrolling = false;
 
 Expense.prototype = {
-  moveThreshold: 48,
-  deleteThreshold: 68,
+  moveThreshold: 12,
+  functionThreshold: 68,
   directions: { true: 'right', false: 'left' },
   scrollingThreshold: 12,
-  init: function init() {
+  init: function () {
     this.$element = $(this.template.firstNode);
     this.$container = this.$element.find('.js-container');
     this.$content = this.$element.find('.js-content');
@@ -19,21 +37,25 @@ Expense.prototype = {
     this.$additionalItems = this.$additional.find('.js-additional-information-item');
     this.additionalItemCount = this.$additionalItems.length;
 
-    this.$additional.data('height', this.$additional.height()).height(0).removeClass('expense__additional-information--is-hidden');
-
-    this.isOpen = false;
-    this.isAnimating = false;
+    this.setAdditionalHeight();
 
     this.setMaxHeight();
 
-    this.isMoving = false;
-    this.isClosing = false;
+    this.fastClick = FastClick.attach(this.template.firstNode);
 
-    this.fastClick = FastClick.attach(this.$element[0]);
+    this.$element.data('expense', this);
   
     return this;
   },
-  setMaxHeight: function setMaxHeight(additional) {
+  setAdditionalHeight: function () {
+    this.$additional
+          .data('height', this.$additional.height())
+          .height(0)
+          .removeElementModifier('is-hidden');
+  
+    return this;
+  },
+  setMaxHeight: function (additional) {
     var height = this.$container.height();
 
     if (typeof additional === 'number') {
@@ -62,15 +84,15 @@ Expense.prototype = {
   
     return this;
   },
-  onTouchMove: function onTouchMove(e) {
+  onTouchMove: function (e) {
     if (Expense.isScrolling || this.isClosing) {
       return;
     }
 
     var touch = e.originalEvent.touches[0];
-    var distance = touch.clientX - this.startedAt.x;
-    var absDistance = Math.abs(distance);
-    var scrollDistance = Math.abs(touch.clientY - this.startedAt.y);
+    var distance;
+    var absDistance;
+    var scrollDistance;
 
     if (this.isMoving) {
 
@@ -78,28 +100,36 @@ Expense.prototype = {
 
       this.move(touch);
 
-    } else if (absDistance >= this.moveThreshold) {
+    } else {
 
-      this.startMoving(touch.clientX, distance > 0);
+      distance = touch.clientX - this.startedAt.x;
+      absDistance = Math.abs(distance);
+      scrollDistance = Math.abs(touch.clientY - this.startedAt.y);
 
-    } else if (scrollDistance >= this.scrollingThreshold) {
+      if (absDistance >= this.moveThreshold) {
 
-      this.scrollDetected();
+        e.preventDefault();
+
+        this.startMoving(touch.clientX, distance > 0);
+
+      } else if (scrollDistance >= this.scrollingThreshold) {
+
+        this.scrollDetected();
+
+      }
 
     }
     
     return this;
   },
-  onTouchEnd: function onTouchEnd() {
+  onTouchEnd: function () {
     if (Expense.isScrolling) {
-      this.allowMoving();
+      this.allowMovement();
 
       return;
     }
 
     if (!this.isMoving) {
-      this.toggleAdditionalInformation();
-
       return;
     }
 
@@ -109,63 +139,58 @@ Expense.prototype = {
 
     this.isClosing = true;
 
-    if (this.isDeletable) {
+    if (this.rightFunctionQueued) {
 
-      if (this.direction === 'right') {
+      $.Velocity(this.$icon, { translateX: [0, this.iconPosition] });
 
-        this.$container.addClass('expense__container--is-exiting-' + this.direction).one(utils.transitionEnd, function () {
-          Router.go('expense.edit', { _id: this.template.data._id });
-        }.bind(this));
+      $.Velocity(this.$content, { translateX: [0, this.position] }).then(this.rightFunction.bind(this));
 
-      } else {
+    } else if (this.leftFunctionQueued && (!this.leftFunction.requiresConfirmation || this.leftFunction.confirmation())) {
 
+      this.$element.addBlockModifier('has-been-removed');
+
+      $.Velocity(this.$container, { translateX: '-100%' }, { duration: timings.fast }).then(function () {
         this.$element.removeBlockModifier('is-open');
 
-        this.$container.addClass('expense__container--is-exiting-' + this.direction).css('max-height', 0).one(utils.transitionEnd, function (e) {
-          if (e.originalEvent.propertyName === 'max-height') {
-            this.remove();
-          }
-        }.bind(this));
-
-      }
+        return $.Velocity(this.$element, { height: 0 });
+      }.bind(this)).then(this.leftFunction.bind(this));
 
     } else {
 
-      this.$content.addClass('expense__content--is-reset').css('transform', 'translateX(0)').one(utils.transitionEnd, function () {
-        this.$content.removeClass('expense__content--is-reset');
+      $.Velocity(this.$icon, { translateX: [0, this.iconPosition] });
 
-        this.reset();
-      }.bind(this));
+      $.Velocity(this.$content, { translateX: [0, this.position] }).then(this.reset.bind(this));
 
     }
   
     return this;
   },
-  onTouchCancel: function onTouchCancel(e) {
+  onTouchCancel: function (e) {
     if (Expense.isScrolling) {
-      this.allowMoving();
+      this.allowMovement();
 
       return;
     }
   
     return this;
   },
-  move: function move(touch) {
+  move: function (touch) {
     var position = touch.clientX - this.movedFrom;
+    var iconPosition;
     var absPosition;
 
     if ((this.direction === 'left' && position > 0) ||
         (this.direction === 'right' && position < 0)) {
-
       position = 0;
-
     }
 
-    if (this.isDeletable) {
+    if (this.rightFunctionQueued || this.leftFunctionQueued) {
 
       position = this.calculateFriction(position);
 
-      this.$icon.css('transform', 'translateX(' + this.getIconPosition(position) + 'px)');
+      iconPosition = this.getIconPosition(position);
+
+      this.$icon.css('transform', 'translateX(' + iconPosition + 'px)');
 
     }
 
@@ -173,49 +198,81 @@ Expense.prototype = {
 
     this.$content.css('transform', 'translateX(' + position + 'px)');
 
-    if (this.isDeletable && absPosition < this.deleteThreshold) {
+    this.position = position;
 
-      this.undeletable();
+    this.iconPosition = iconPosition;
 
-    } else if (!this.isDeletable && absPosition >= this.deleteThreshold) {
+    if (this.rightFunctionQueued && position < this.functionThreshold) {
+      this.unQueueRightFunction();
+    } else if (!this.rightFunctionQueued && position >= this.functionThreshold) {
+      this.queueRightFunction();
+    }
 
-      this.deletable();
-
+    if (this.leftFunctionQueued && absPosition < this.functionThreshold) {
+      this.unqueueLeftFunction();
+    } else if (!this.leftFunctionQueued && absPosition >= this.functionThreshold) {
+      this.queueLeftFunction();
     }
   
     return this;
   },
-  scrollDetected: function scrollDetected() {
+  scrollDetected: function () {
     Expense.isScrolling = true;
   
     return this;
   },
-  allowMoving: function allowMoving() {
+  allowMovement: function () {
     Expense.isScrolling = false;
   
     return this;
   },
-  reset: function reset() {
-
+  reset: function () {
+    this.position = 0;
+    this.iconPosition = 0;
+    this.isOpen = false;
+    this.isAnimating = false;
     this.isMoving = false;
-    this.isDeletable = false;
     this.isClosing = false;
+    this.leftFunctionQueued = false;
+    this.rightFunctionQueued = false;
 
     delete this.direction;
     delete this.$icon;
   
     return this;
   },
-  remove: function remove() {
+  expenseEdit: function () {
     var id = this.template.data._id;
 
-    Session.set('deleted', (Session.get('deleted') || []).concat([id]));
+    Router.go('expense.edit', { _id: id });
+  
+    return this;
+  },
+  expenseDelete: function () {
+    var id = this.template.data._id;
 
     Meteor.call('expenseDelete', id);
 
-    this.destroy();
+    return this;
   },
-  destroy: function destroy() {
+  expenseRestore: function () {
+    var id = this.template.data._id;
+
+    Meteor.call('expenseRestore', id);
+
+    return this;
+  },
+  expenseDestroy: function () {
+    var id = this.template.data._id;
+
+    Meteor.call('expenseDestroy', id);
+
+    return this;
+  },
+  expenseDestroyConfirm: function () {
+    return window.confirm('Are you sure you want to destroy this expense?');
+  },
+  destroy: function () {
     this.fastClick.destroy();
 
     delete this.movedFrom;
@@ -226,7 +283,7 @@ Expense.prototype = {
 
     return this;
   },
-  startMoving: function startMoving(position, direction) {
+  startMoving: function (position, direction) {
     this.isMoving = true;
 
     this.movedFrom = position;
@@ -234,70 +291,103 @@ Expense.prototype = {
     this.direction = this.directions[direction];
 
     if (this.direction === 'right') {
-      this.$icon = this.$element.find('.js-edit-icon').show();
-      this.$element.find('.js-delete-icon').hide();
+      this.$icon = this.$element.find('.js-left-icon').show();
+      this.$element.find('.js-right-icon').hide();
     } else {
-      this.$icon = this.$element.find('.js-delete-icon').show();
-      this.$element.find('.js-edit-icon').hide();
+      this.$icon = this.$element.find('.js-right-icon').show();
+      this.$element.find('.js-left-icon').hide();
     }
   
     return this;
   },
-  deletable: function deletable() {
-    this.isDeletable = true;
+  queueRightFunction: function () {
+    this.rightFunctionQueued = true;
 
     this.$icon.addElementModifier('is-active');
   
     return this;
   },
-  undeletable: function undeletable() {
-    this.isDeletable = false;
+  unQueueRightFunction: function () {
+    this.rightFunctionQueued = false;
 
     this.$icon.removeElementModifier('is-active').css('transform', 'translateX(0)');
   
     return this;
   },
-  calculateFriction: function calculateFriction(position) {
+  queueLeftFunction: function () {
+    this.leftFunctionQueued = true;
+
+    this.$icon.addElementModifier('is-active');
+  
+    return this;
+  },
+  unqueueLeftFunction: function () {
+    this.leftFunctionQueued = false;
+
+    this.$icon.removeElementModifier('is-active').css('transform', 'translateX(0)');
+  
+    return this;
+  },
+  calculateFriction: function (position) {
     var sign = position >= 0 ? 1 : -1;
     var absPosition = Math.abs(position);
   
-    return Math.floor(this.deleteThreshold + ((absPosition - this.deleteThreshold) * (this.deleteThreshold / absPosition))) * sign;
+    return Math.floor(this.functionThreshold + ((absPosition - this.functionThreshold) * (this.functionThreshold / absPosition))) * sign;
   },
-  getIconPosition: function getIconPosition(position) {
+  getIconPosition: function (position) {
     var sign = position >= 0 ? 1 : -1;
     var absPosition = Math.abs(position);
   
-    return (absPosition - this.deleteThreshold) * sign;
+    return (absPosition - this.functionThreshold) * sign;
   },
-  toggleAdditionalInformation: function toggleAdditionalInformation() {
-    if (this.isAnimating) {
+  close: function () {
+    if (!this.isOpen ||
+        this.isAnimating) {
       return this;
     }
 
     this.isAnimating = true;
 
-    var duration = 200;
-    var isOpen = this.isOpen;
+    this.isOpen = !this.isOpen;
+
+    this.$element.removeBlockModifier('is-open');
+
+    return $.Velocity(this.$additional, { height: 0 }, { duration: timings.fastest, easing: 'easeInQuad' }).then(function () {
+      this.setMaxHeight();
+
+      this.isAnimating = false;
+    }.bind(this));
+  },
+  open: function () {
+    if (this.isOpen ||
+        this.isAnimating) {
+      return this;
+    }
+
+    this.isAnimating = true;
 
     this.isOpen = !this.isOpen;
 
-    this.$element.toggleBlockModifier('is-open');
+    this.$element.addBlockModifier('is-open');
+
+    this.setMaxHeight(this.$additional.data('height'));
+
+    return $.Velocity(this.$additional, { height: this.$additional.data('height') }, { duration: timings.fastest, delay: timings.fastest, easing: 'easeOutQuad' }).then(function () {
+      this.isAnimating = false;
+    }.bind(this));
+  },
+  toggle: function () {
+    if (this.isAnimating) {
+      return this;
+    }
+
+    var isOpen = this.isOpen;
 
     if (isOpen) {
-      $.Velocity(this.$additional, { height: 0 }, { duration: duration, easing: 'easeInQuad' }).then(function () {
-        this.setMaxHeight();
-
-        this.isAnimating = false;
-      }.bind(this));
+      return this.close();
     } else {
-      $.Velocity(this.$additional, { height: this.$additional.data('height') }, { duration: duration, delay: duration, easing: 'easeOutQuad' }).then(function () {
-        this.isAnimating = false;
-      }.bind(this));
-
-      this.setMaxHeight(this.$additional.data('height'));
+      return this.open();
     }
-  
-    return this;
   },
 };
 
@@ -307,29 +397,6 @@ Template.expense.created = function () {
 
 Template.expense.rendered = function () {
   this.expense.init();
-
-  this.firstNode.parentNode._uihooks = {
-    insertElement: function(node, next) {
-      var $node = $(node).css({ visibility: 'hidden', position: 'absolute' });
-      var height;
-      var $container = $node.find('.js-container')
-        .css({ transform: 'translateX(-100%)' });
-
-      $node.insertBefore(next);
-
-      height = $node.outerHeight();
-
-      $node.height(0).css({ visibility: 'visible', position: 'static' });
-
-      console.log(height);
-      
-      Deps.afterFlush(function() {
-        $.Velocity($node, { height: height }, { duration: 400, easing: 'ease' }).then(function () {
-          $container.velocity({ translateX: ['0%', '-100%'] }, { duration: 400, easing: 'ease' });
-        });
-      });
-    },
-  };
 };
 
 Template.expense.destroyed = function () {
@@ -340,31 +407,68 @@ Template.expense.destroyed = function () {
 
 Template.expense.helpers({
   hasTags: function () {
-    return this.tags.length !== 0;
+    return this.tags.count() > 0;
   }
 });
 
 Template.expense.events({
+  'click .js-expense-details': function (e, template) {
+    e.preventDefault();
+
+    template.expense.toggle();
+
+    return false;
+  },
   'click .js-tag': function (e) {
     e.stopPropagation();
 
     e.preventDefault();
 
-    var query = Router.current().params.query;
+    var tagIds = Session.get('filteredTagIds') || [];
     var tagId = $(e.currentTarget).data('id');
     var index;
 
-    if (query.hasOwnProperty('tags')) {
-      if ((index = query.tags.indexOf(tagId)) !== -1) {
-        query.tags.splice(index, 1);
-      } else {
-        query.tags.push(tagId);
-      }
+    if ((index = tagIds.indexOf(tagId)) === -1) {
+      tagIds.push(tagId);
+
+      $(e.currentTarget).addClass('tag--is-selected');
     } else {
-      query.tags = [tagId];
+      tagIds.splice(index, 1);
+
+      $(e.currentTarget).removeClass('tag--is-selected');
     }
 
-    Router.go('expense.index', {}, { query: query });
+    Session.set('filteredTagIds', tagIds);
+
+    return false;
+  },
+  'click .js-expense-edit': function (e, template) {
+    e.preventDefault();
+
+    template.expense.expenseEdit();
+
+    return false;
+  },
+  'click .js-expense-delete': function (e, template) {
+    e.preventDefault();
+
+    template.expense.expenseDelete();
+
+    return false;
+  },
+  'click .js-expense-restore': function (e, template) {
+    e.preventDefault();
+
+    template.expense.expenseRestore();
+
+    return false;
+  },
+  'click .js-expense-destroy': function (e, template) {
+    e.preventDefault();
+
+    if (template.expense.expenseDestroyConfirm()) {
+      template.expense.expenseDestroy();
+    }
 
     return false;
   },

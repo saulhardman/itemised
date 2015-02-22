@@ -1,8 +1,6 @@
 var Undo = function (template) {
   this.template = template;
 
-  this.bindEvents();
-
   return this;
 };
 
@@ -12,13 +10,17 @@ Undo.prototype = {
     this.$element = this.template.$('#js-undo');
     this.$menu = this.template.$('#js-undo-menu');
 
+    this.shake = new Shake();
     this.fastClick = FastClick.attach(this.$element[0]);
+
+    this.bindEvents();
   
     return this;
   },
   destroy: function destroy() {
     this.unBindEvents();
 
+    this.shake.stop();
     this.fastClick.destroy();
   
     delete this.template;
@@ -28,6 +30,8 @@ Undo.prototype = {
     return this;
   },
   bindEvents: function bindEvents() {
+    this.shake.start();
+
     $(window).on('shake', this.onShake.bind(this));
   
     return this;
@@ -37,16 +41,14 @@ Undo.prototype = {
   
     return this;
   },
-  onShake: function onShake() {
-    var deleted = Session.get('deleted');
+  onShake: function onShake(e) {
+    var deleted = Expenses.find({ isDeleted: true });
 
-    if (this.isOpen || (typeof deleted === 'undefined' || deleted.length === 0)) {
+    if (this.isOpen || deleted.count() === 0) {
       return;
     }
   
     this.open();
-
-    return this;
   },
   open: function open() {
     this.isOpen = true;
@@ -72,24 +74,32 @@ Undo.prototype = {
   
     return this;
   },
-  onClickUndo: function onClickUndo() {
-    var deleted = Session.get('deleted');
-    var id = deleted.pop();
+  onClickUndo: function onClickUndo(e) {
+    var lastExpenseDeleted = Expenses.findOne({ isDeleted: true }, { sort: { deletedAt: -1 } });
 
-    Session.set('deleted', deleted);
-
-    Meteor.call('expenseRestore', id);
+    Meteor.call('expenseRestore', lastExpenseDeleted._id);
 
     this.close();
   
     return this;
   },
-  onClickCancel: function onClickCancel() {
+  onClickArchive: function onClickArchive(e) {
+    Router.go('expense.archive');
+  
+    return this;
+  },
+  onClickCancel: function onClickCancel(e) {
     this.close();
   
     return this;
   },
 };
+
+Template.undo.helpers({
+  deletedCount: function () {
+    return Expenses.find({ isDeleted: true }).count();
+  }
+});
 
 Template.undo.created = function () {
   this.undo = new Undo(this);
@@ -106,16 +116,19 @@ Template.undo.destroyed = function () {
 };
 
 Template.undo.events({
-  'touchstart, touchmove, touchend, click': function (event) {
-    event.preventDefault();
-    event.stopPropagation();
+  'touchstart, touchmove, touchend, click': function (e) {
+    e.preventDefault();
+    e.stopPropagation();
 
     return false;
   },
-  'click #js-undo-button': function (event, template) {
-    template.undo.onClickUndo(event);
+  'click #js-undo-button': function (e, template) {
+    template.undo.onClickUndo(e);
   },
-  'click #js-cancel-button': function (event, template) {
-    template.undo.onClickCancel(event);
+  'click #js-archive-button': function (e, template) {
+    template.undo.onClickArchive(e);
+  },
+  'click #js-cancel-button': function (e, template) {
+    template.undo.onClickCancel(e);
   },
 });

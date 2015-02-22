@@ -1,5 +1,4 @@
 .expense
-    position: relative
     overflow: hidden
     padding: 0
     background: colour('grey', 'light')
@@ -8,23 +7,17 @@
     -webkit-tap-highlight-color: transparent
 
     &--is-open
-        padding: 4px
+        padding: 6px
         transition: padding .2s ease-in
 
         & + &
             padding-top: 0
-
-    &__container
-        &--is-exiting-left,
-        &--is-exiting-right
-            max-height: 0px
-            transition: transform .4s, max-height .4s ease .2s
             
-        &--is-exiting-left
-            transform: translateX(-100%)
-
-        &--is-exiting-right
-            transform: translateX(100%)
+    &--is-animating
+        pointer-events: none
+            
+    &__container
+        position: relative
 
     &__icon
         size = 36px
@@ -37,26 +30,32 @@
         height: size
         fill: colour('grey')
 
-        &--delete
+        &--right
             right: 16px
             
-        &--edit
+        &--left
             left: 16px
             
         &--is-active
             fill: colour('black')
+            
+    &__button
+        float: left
+        margin: 4px 0 0
+        width: 50%
+        border: 0
             
     &__date-icon,
     &__location-icon
         float: left
         
     &__date-icon
-        margin: 5px 5px 0 1px
+        margin: 5px 5px 0 -1px
         width: 14px
         height: 14px
         
     &__location-icon
-        margin: 4px 4px 0 0
+        margin: 4px 4px 0 -2px
         width: 16px
         height: 16px
 
@@ -72,6 +71,10 @@
         flex-flow(row nowrap)
         align-items(baseline)
         padding: 16px 0
+        width: 100%
+        background: none
+        border: 0
+        cursor: pointer
 
     &__content,
     &__note,
@@ -123,7 +126,7 @@
             pointer-events: none
 
     &__tags
-        padding: 10px 16px 16px
+        padding: 10px 16px 6px
         border: 1px dashed colour('grey', 'light')
         border-left: 0
         border-right: 0

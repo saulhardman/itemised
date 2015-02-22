@@ -6,11 +6,13 @@ var ExpenseNew = function (template) {
 
 ExpenseNew.prototype = {
   init: function init() {
-    this.$element = this.template.$('#js-expense-new');
+    this.$element = $(this.template.firstNode);
     this.$tagsInput = this.$element.find('.js-expense-tags');
     this.$tags = this.$element.find('.js-tag');
     
     this.setTagStates();
+
+    this.fastClick = FastClick.attach(this.template.firstNode);
 
     return this;
   },
@@ -23,23 +25,14 @@ ExpenseNew.prototype = {
     var $date = $this.find('.js-expense-date');
     var $time = $this.find('.js-expense-time');
     var $location = $this.find('.js-expense-location');
-    var $tags = $this.find('.js-expense-tags');
-    var date = new Date($date.val());
-
-    date.setHours($time.val().substring(0, 2));
-    
-    date.setMinutes($time.val().substring(3, 5));
+    var date = moment($date.val()).hour($time.val());
 
     Meteor.call('expenseInsert', {
       amount: Math.round($amount.val() * 100),
       note: $note.val(),
-      date: date,
+      date: date.toDate(),
       location: $location.val(),
-      tagNames: _.compact(_.uniq($tags.val().split(',').map(function (value) {
-        return value.trim().toLowerCase().split(' ').map(function (value) {
-          return value.trim();
-        }).join('-');
-      })))
+      tagNames: _.compact(_.uniq(this.$tagsInput.val().split(',').map(utils.slug)))
     });
 
     Router.go('/');
@@ -50,8 +43,8 @@ ExpenseNew.prototype = {
     e.preventDefault();
 
     var $this = $(e.currentTarget);
-    var name = $this.find('.js-tag-name').text();
-    var names = _.compact(this.$tagsInput.val().split(',').map(function (value) { return value.trim(); }));
+    var name = utils.slug($this.find('.js-tag-name').text());
+    var names = _.compact(this.$tagsInput.val().split(',').map(utils.slug));
     var value;
 
     if (names.indexOf(name) > -1) {
@@ -64,7 +57,7 @@ ExpenseNew.prototype = {
       $this.addClass('tag--is-selected');
     }
 
-    value = names.join(', ');
+    value = names.map(utils.prettyName).join(', ');
 
     if (names.length > 0) {
       value += ', ';
@@ -75,11 +68,7 @@ ExpenseNew.prototype = {
     return false;
   },
   setTagStates: function setTagStates() {
-    var names = _.compact(this.$tagsInput.val().split(',').map(function (value) {
-      return value.trim().toLowerCase().split(' ').map(function (value) {
-        return value.trim();
-      }).join('-');
-    }));
+    var names = _.compact(this.$tagsInput.val().split(',').map(utils.slug));
 
     this.$tags.removeClass('tag--is-selected').filter(names.map(function (value) {
       return '.js-tag--' + value;
@@ -88,6 +77,8 @@ ExpenseNew.prototype = {
     return this;
   },
   destroy: function destroy() {
+    this.fastClick.destroy();
+
     delete this.$element;
     delete this.$tagsInput;
     delete this.$tags;
@@ -97,16 +88,37 @@ ExpenseNew.prototype = {
 };
 
 Template.expenseNew.helpers({
-  now: function () {
-    var now = new Date();
+  dates: function () {
+    var now = moment().add(1, 'day');
 
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    
-    return {
-        date: now.toJSON().substring(0, 10),
-        time: now.toJSON().substring(11, 16)
-    };
-  }
+    return _(7).times(function () {
+      var day = now.subtract(1, 'day');
+
+      return {
+        value: day.format('YYYY-MM-DD'),
+        title: day.calendar(),
+      };
+    });
+  },
+  times: function () {
+    var theHourNow = moment().get('hour');
+    var differences = [];
+    var times;
+
+    times = _.map([8, 12, 16, 19, 22], function (hour, index) {
+      differences[index] = Math.abs(theHourNow - hour);
+
+      return {
+        value: hour,
+        title: utils.getHumanTime(hour),
+        selected: false,
+      };
+    });
+
+    times[differences.indexOf(_.min(differences))].selected = true;
+
+    return times;
+  },
 });
 
 Template.expenseNew.events({

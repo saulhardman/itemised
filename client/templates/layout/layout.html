@@ -1,0 +1,11 @@
+<template name="layout">
+  {{> icons}}
+
+  <main id="js-main" class="main">
+    {{> yield}}
+  </main>
+
+  <nav class="nav">
+    {{> yield "nav"}}
+  </nav>
+</template>

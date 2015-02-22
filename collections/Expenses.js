@@ -29,9 +29,10 @@ Expenses.allow({
 });
 
 Meteor.methods({
-  expenseInsert: function expenseInsert(expenseAttributes) {
+  expenseInsert: function (expenseAttributes) {
     var tagNames = expenseAttributes.tagNames;
     var tagIds = [];
+    var now = new Date();
 
     if (Array.isArray(tagNames) && tagNames.length > 0) {
       tagIds = tagNames.map(function (tagName) {
@@ -47,6 +48,8 @@ Meteor.methods({
 
     return Expenses.insert({
       userId: Meteor.userId(),
+      createdAt: now,
+      updatedAt: now,
       isDeleted: false,
       amount: expenseAttributes.amount,
       note: expenseAttributes.note,
@@ -55,7 +58,8 @@ Meteor.methods({
       tagIds: tagIds,
     });
   },
-  expenseUpdate: function expenseUpdate(expense, updatedAttributes) {
+  expenseUpdate: function (expenseId, updatedAttributes) {
+    var expense = Expenses.findOne(expenseId);
     var tagNames = updatedAttributes.tagNames;
     var tagIds = [];
 
@@ -69,24 +73,26 @@ Meteor.methods({
       Meteor.call('tagDecrement', tagId);
     });
 
-    Meteor.call('tagClean');
-
-    return Expenses.update(expense._id, {
+    return Expenses.update(expenseId, {
       $set: {
         amount: updatedAttributes.amount,
         note: updatedAttributes.note,
         date: updatedAttributes.date,
         location: updatedAttributes.location,
         tagIds: tagIds,
+        updatedAt: new Date(),
       }
     });
   },
-  expenseDelete: function expenseDelete(expenseId) {
+  expenseDelete: function (expenseId) {
     var expense = Expenses.findOne(expenseId);
+    var now = new Date();
 
     Expenses.update(expenseId, {
       $set: {
         isDeleted: true,
+        deletedAt: now,
+        updatedAt: now,
       }
     });
 
@@ -98,16 +104,15 @@ Meteor.methods({
       });
     });
 
-    Meteor.call('tagClean');
-
     return expenseId;
   },
-  expenseRestore: function expenseRestore(expenseId) {
+  expenseRestore: function (expenseId) {
     var expense = Expenses.findOne(expenseId);
 
     Expenses.update(expenseId, {
       $set: {
         isDeleted: false,
+        updatedAt: new Date(),
       }
     });
 
@@ -115,6 +120,21 @@ Meteor.methods({
       Tags.update(tagId, {
         $inc: {
           count: 1
+        }
+      });
+    });
+
+    return expenseId;
+  },
+  expenseDestroy: function (expenseId) {
+    var expense = Expenses.findOne(expenseId);
+
+    Expenses.remove(expenseId);
+
+    expense.tagIds.forEach(function (tagId) {
+      Tags.update(tagId, {
+        $inc: {
+          count: -1
         }
       });
     });

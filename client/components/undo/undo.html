@@ -2,6 +2,9 @@
   <div id="js-undo" class="undo">
     <menu id="js-undo-menu" class="undo__menu">
       <menuitem id="js-undo-button" class="button button--functional undo__menu-item">Undo</menuitem>
+      {{#if deletedCount}}
+        <menuitem id="js-archive-button" class="button button--functional undo__menu-item">See Archive ({{deletedCount}})</menuitem>
+      {{/if}}
       <menuitem id="js-cancel-button" class="button button--functional undo__menu-item">Cancel</menuitem>
     </menu>
   </div>

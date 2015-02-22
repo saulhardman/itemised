@@ -1,16 +1,22 @@
 <template name="expense">
   <article data-block-name="expense" class="js-expense expense">
-    <div class="js-container">
-      <svg data-element-name="icon" class="js-edit-icon icon expense__icon expense__icon--edit">
-        <use xlink:href="#icon-edit"></use>
-      </svg>
+    <div class="js-container expense__container">
+      {{#if isDeleted}}
+        <svg data-element-name="icon" class="js-left-icon icon expense__icon expense__icon--left expense__icon--restore">
+          <use xlink:href="#icon-restore"></use>
+        </svg>
+      {{else}}
+        <svg data-element-name="icon" class="js-left-icon icon expense__icon expense__icon--left expense__icon--edit">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      {{/if}}
       <div class="js-content expense__content">
-        <div class="expense__details">
+        <button class="js-expense-details expense__details">
           <p class="expense__note">{{note}}</p>
           <span class="expense__separator"></span>
           <p class="expense__amount">{{parseCurrency amount}}</p>
-        </div>
-        <div class="js-additional-information expense__additional-information expense__additional-information--is-hidden">
+        </button>
+        <div data-element-name="additional-information" class="js-additional-information expense__additional-information expense__additional-information--is-hidden">
           {{#if location}}
             <p class="js-additional-information-item expense__additional-information-item expense__location">
               <svg class="icon expense__location-icon">
@@ -29,19 +35,36 @@
             <div class="js-additional-information-item expense__additional-information-item expense__tags-container">
               <ul class="js-tags expense__tags">
                 {{#each tags}}<li class="expense__tag">
-                  <a data-id="{{_id}}" class="js-tag tag {{#if selected}} tag--is-selected{{/if}}" title="Show all `{{prettyName name}}` expenses">
-                    {{prettyName name}} 
+                  <a data-id="{{_id}}" class="js-tag tag {{#if selected}} tag--is-selected{{/if}}" title="Show all `{{prettyName}}` expenses">
+                    {{prettyName}} 
                     <span class="tag__count{{#if selected}} tag__count--is-selected{{/if}}">{{count}}</span>
                   </a>
                 </li>{{/each}}
               </ul>
             </div>
           {{/if}}
+          {{#if isDeleted}}
+            <div>
+              <button class="js-expense-restore button button--small button--primary expense__button expense__button--restore">Restore</button>
+              <button class="js-expense-destroy button button--small button--secondary expense__button expense__button--destroy">Destroy</button>
+            </div>
+          {{else}}
+            <div>
+              <button class="js-expense-edit button button--small button--primary expense__button expense__button--edit">Edit</button>
+              <button class="js-expense-delete button button--small button--secondary expense__button expense__button--delete">Delete</button>
+            </div>
+          {{/if}}
         </div>
       </div>
-      <svg data-element-name="icon" class="js-delete-icon icon expense__icon expense__icon--delete">
-        <use xlink:href="#icon-delete"></use>
-      </svg>
+      {{#if isDeleted}}
+        <svg data-element-name="icon" class="js-right-icon icon expense__icon expense__icon--right expense__icon--destroy">
+          <use xlink:href="#icon-destroy"></use>
+        </svg>
+      {{else}}
+        <svg data-element-name="icon" class="js-right-icon icon expense__icon expense__icon--right expense__icon--delete">
+          <use xlink:href="#icon-delete"></use>
+        </svg>
+      {{/if}}
     </div>
   </article>
 </template>

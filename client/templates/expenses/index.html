@@ -1,17 +1,17 @@
 <template name="expenseIndex">
-  {{> icons}}
-
-  <section id="js-expense-index" class="expense-index">
+  <div class="expense-index">
     {{> totals}}
 
-    <div class="expenses">
+    <div id="js-expenses" class="expense-index__expenses">
       {{#each expenses}}
         {{> expense}}
       {{/each}}
     </div>
 
     {{> undo}}
+  </div>
 
-    <a class="button button--functional expense-index__add-expense-button" href="{{pathFor route='expense.new'}}">Add Expense</a>
-  </section>
+  {{#contentFor "nav"}}
+    <a class="button button--functional" href="{{pathFor route='expense.new'}}">Add Expense</a>
+  {{/contentFor}}
 </template>

@@ -1,13 +1,17 @@
 .tag
     position: relative
     margin: 0 8px 0 0
+    padding: 2px 8px 3px
     font-scale('body', '1')
     line-height: rem(24)
-    padding: 3px 6px 5px
+    background: colour('white');
     border: 1px solid colour('grey', 'light')
             
     &:focus
         border-color: colour('grey', 'medium')
+
+    .no-touch &:hover,
+        border-color: colour('black')
 
     &:active
         background: colour('grey', 'medium')
@@ -23,16 +27,14 @@
             border-color: colour('white')
 
     &__count
-        display: inline-block
-        vertical-align: middle
-        padding: 2px
-        width: 20px
-        height: @width
+        padding: 0 0 0 2px
         font-size: rem(10)
-        line-height: rem(14)
-        text-align: center
-        border: 1px dotted colour('grey', 'medium')
-        border-radius: 50%
+
+        &:before
+            content: '('
+            
+        &:after
+            content: ')'
         
         &--is-selected,
         .tag:active &
