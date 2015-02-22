@@ -2,50 +2,8 @@
 
 A meteor app to keep track of your personal expenses in a minimal, itemised list.
 
-## To do
+- [To do list](https://gist.github.com/saulhardman/c318b110c12536350055)
 
-### User accounts
-- [ ] Add user accounts
+## License
 
-### User flow
-- [ ] Add an introduction template to the expenses list when no expenses are present
-
-### Tag suggestions
-- [x] Provide a list of tags to the `addExpense` view (ordered by count)
-- [x] Render list of tags
-- [x] Listen for click event on tags elements and add tag to tags input and mark tag as selected
-- [x] Break tag out into its own block
-- [ ] Make tags in 'filtered by' list clickable
-
-### Expenses
-- [x] Add location icon
-- [x] Add date icon
-- [x] Refactor drag to delete logic
-- [x] Swipe right to edit expense
-- [x] Only show note and amount by default
-- [x] Show date, location, and tags on tap
-- [ ] Bring new.js inline with edit.js
-- [ ] Ask someone who knows something about Meteor how they would implement expense filtering by tag
-- [ ] Provide 'back' functionality on the new/edit expense views
-
-### Global totals
-- [x] Add the total for the current week
-- [x] Add the total for the current month
-- [x] Add the total for the current year
-- [x] Add the all time total
-- [ ] Ask Blaise his opinion on totals
-
-### Animations
-- [ ] Figure out how/when to animate for smoother transitions
-
-### Search
-- [ ] Add search functionality
-
-### Undo menu
-- [x] On deleting an expense, keep a temporary record of it
-- [x] Open menu on shake gesture
-- [x] `Undo delete` option should restore the previously deleted expense
-- [x] `Cancel` option should close the menu
-
-### Miscellaneous
-- [x] Add container to tag list to correctly position fade out at the right-hand-side
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Itemised</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://saulhardman.com" property="cc:attributionName" rel="cc:attributionURL">Saul Hardman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="http://github.com/saulhardman/itemised" rel="dct:source">http://github.com/saulhardman/itemised</a>.<br />Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="http://saulhardman.com" rel="cc:morePermissions">http://saulhardman.com</a>.
