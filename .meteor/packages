@@ -8,10 +8,8 @@ insecure
 accounts-password
 accounts-ui-unstyled
 iron:router
-jquery
-mrt:moment
 stylus
-percolate:velocityjs
-fastclick
 mquandalle:bower
 meteorhacks:kadira
+momentjs:moment
+cwaring:modernizr
