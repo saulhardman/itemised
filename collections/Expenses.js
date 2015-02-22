@@ -1,4 +1,20 @@
-Expenses = new Mongo.Collection('expenses');
+Expenses = new Mongo.Collection('expenses', {
+  transform: function transform(doc) {
+    var filteredTagIds;
+
+    doc.tags = Tags.find({ _id: { $in: doc.tagIds || [] } });
+
+    if (Meteor.isClient && (filteredTagIds = Session.get('filteredTagIds') || []).length) {
+      doc.tags.forEach(function (tag) {
+        if (filteredTagIds.indexOf(tag._id)) {
+          tag.selected = true;
+        }
+      });
+    }
+
+    return doc;
+  }
+});
 
 Expenses.allow({
   insert: function () {
