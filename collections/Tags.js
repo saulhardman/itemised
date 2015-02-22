@@ -1,4 +1,10 @@
-Tags = new Mongo.Collection('tags');
+Tags = new Mongo.Collection('tags', {
+  transform: function transform(doc) {
+    doc.prettyName = utils.prettyName(doc.name);
+  
+    return doc;
+  },
+});
 
 Tags.allow({
   insert: function () {
