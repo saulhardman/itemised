@@ -2,7 +2,7 @@ Template.expenseIndex.rendered = function () {
   this.fastClick = FastClick.attach(this.firstNode.parentNode);
 
   this.find('#js-expenses')._uihooks = {
-    insertElement: function insertElement(node, next) {
+    insertElement: function (node, next) {
       var $node = $(node).css({ visibility: 'hidden', position: 'absolute' });
       var $container = $node.find('.js-container').css({ transform: 'translateX(-100%)' });
       var height;
@@ -22,7 +22,7 @@ Template.expenseIndex.rendered = function () {
         return $container.velocity({ translateX: ['0%', '-100%'] }, { duration: 400, easing: 'ease' });
       });
     },
-    removeElement: function removeElement(node) {
+    removeElement: function (node) {
       var $node = $(node);
 
       if ($node.hasBlockModifier('has-been-removed')) {
