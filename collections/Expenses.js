@@ -107,7 +107,15 @@ Meteor.methods({
     return expenseId;
   },
   expenseRestore: function (expenseId) {
-    var expense = Expenses.findOne(expenseId);
+    var expense;
+
+    if (typeof expenseId === 'undefined') {
+      expense = Expenses.findOne({}, { sort: { deletedAt: -1 } });
+
+      expenseId = expense._id;
+    } else {
+      expense = Expenses.findOne(expenseId);
+    }
 
     Expenses.update(expenseId, {
       $set: {
