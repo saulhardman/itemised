@@ -7,11 +7,11 @@ var Undo = function (template) {
 Undo.prototype = {
   isOpen: false,
   init: function init() {
-    this.$element = this.template.$('#js-undo');
-    this.$menu = this.template.$('#js-undo-menu');
+    this.$element = $(this.template.firstNode);
+    this.$menu = this.$element.find('#js-undo-menu');
 
     this.shake = new Shake();
-    this.fastClick = FastClick.attach(this.$element[0]);
+    this.fastClick = FastClick.attach(this.template.firstNode);
 
     this.bindEvents();
   
@@ -20,7 +20,6 @@ Undo.prototype = {
   destroy: function destroy() {
     this.unBindEvents();
 
-    this.shake.stop();
     this.fastClick.destroy();
   
     delete this.template;
@@ -37,6 +36,8 @@ Undo.prototype = {
     return this;
   },
   unBindEvents: function unBindEvents() {
+    this.shake.stop();
+
     $(window).off('shake');
   
     return this;
