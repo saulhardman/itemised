@@ -87,6 +87,7 @@ Meteor.methods({
   expenseDelete: function (expenseId) {
     var expense = Expenses.findOne(expenseId);
     var now = new Date();
+    var message;
 
     Expenses.update(expenseId, {
       $set: {
@@ -103,6 +104,23 @@ Meteor.methods({
         }
       });
     });
+
+    if (Meteor.isClient) {
+
+      if (Meteor.isCordova) {
+        message = 'Shake your device to undo';
+      } if (Modernizr.devicemotion && Modernizr.touch) {
+        message = 'Shake your device or tap here to undo';
+      } else {
+        message = 'Click here to undo';
+      }
+
+      Meteor.call('notificationInsert', {
+        message: message,
+        type: Notifications.TYPES.UNDO,
+      });
+
+    }
 
     return expenseId;
   },
