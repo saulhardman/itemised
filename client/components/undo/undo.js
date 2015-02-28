@@ -57,6 +57,8 @@ Undo.prototype = {
     this.$element.addClass('undo--is-open');
 
     this.$menu.addClass('undo--is-open__menu');
+
+    Meteor.call('notificationRemove', { type: Notifications.TYPES.UNDO });
   
     return this;
   },
