@@ -1,0 +1,9 @@
+<template name="expenseArchive">
+  <div class="expense-archive">
+    <ul id="js-expenses" class="expense-list">
+      {{#each expenses}}
+        <li>{{> expense}}</li>
+      {{/each}}
+    </ul>
+  </div>
+</template>

@@ -1,3 +1,3 @@
-Template.expenseIndex.rendered = function () {
+Template.expenseArchive.rendered = function () {
   this.find('#js-expenses')._uihooks = expensesUiHooks;
 };

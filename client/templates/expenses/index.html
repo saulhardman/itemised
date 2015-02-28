@@ -2,11 +2,11 @@
   <div class="expense-index">
     {{> totals}}
 
-    <div id="js-expenses" class="expense-index__expenses">
+    <ul id="js-expenses" class="expense-list">
       {{#each expenses}}
-        {{> expense}}
+        <li>{{> expense}}</li>
       {{/each}}
-    </div>
+    </ul>
 
     {{> undo}}
   </div>

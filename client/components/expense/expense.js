@@ -141,15 +141,27 @@ Expense.prototype = {
 
     if (this.rightFunctionQueued) {
 
-      $.Velocity(this.$icon, { translateX: [0, this.iconPosition] });
+      if (this.rightFunction === this.expenseRestore) {
 
-      $.Velocity(this.$content, { translateX: [0, this.position] }).then(this.rightFunction.bind(this));
+        this.$element.addClass('removed exit-right');
+
+        $.Velocity(this.$container, { translateX: '100%' }, { duration: timings.fast, easing: 'ease' }).then(function () {
+          this.$element.removeBlockModifier('is-open');
+
+          return $.Velocity(this.$element, { height: 0 });
+        }.bind(this)).then(this.rightFunction.bind(this));
+
+      } else {
+
+        this.rightFunction();
+
+      }
 
     } else if (this.leftFunctionQueued && (!this.leftFunction.requiresConfirmation || this.leftFunction.confirmation())) {
 
-      this.$element.addBlockModifier('has-been-removed');
+      this.$element.addClass('removed exit-left');
 
-      $.Velocity(this.$container, { translateX: '-100%' }, { duration: timings.fast }).then(function () {
+      $.Velocity(this.$container, { translateX: '-100%' }, { duration: timings.fast, easing: 'ease' }).then(function () {
         this.$element.removeBlockModifier('is-open');
 
         return $.Velocity(this.$element, { height: 0 });
@@ -251,6 +263,8 @@ Expense.prototype = {
   expenseDelete: function () {
     var id = this.template.data._id;
 
+    this.$element.addClass('exit-left');
+
     Meteor.call('expenseDelete', id);
 
     return this;
@@ -258,12 +272,16 @@ Expense.prototype = {
   expenseRestore: function () {
     var id = this.template.data._id;
 
+    this.$element.addClass('exit-right');
+
     Meteor.call('expenseRestore', id);
 
     return this;
   },
   expenseDestroy: function () {
     var id = this.template.data._id;
+
+    this.$element.addClass('exit-left');
 
     Meteor.call('expenseDestroy', id);
 
