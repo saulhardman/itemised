@@ -1,4 +1,4 @@
-var expensesUiHooks = {
+expensesUiHooks = {
   insertElement: function (node, next) {
     var $node = $(node).css({ visibility: 'hidden', position: 'absolute' });
     var $container = $node.find('.js-container').css({ transform: 'translateX(-100%)' });
