@@ -1,13 +1,13 @@
-font(style, scale)
-    font-style = font-styles[style]
-    font-family: font-style.font-family
-    font-size: font-style.scale[scale].font-size
-    line-height: font-style.scale[scale].line-height
+font(group, scale)
+    font-group = font-groups[group]
+    font-family: font-group.font-family
+    font-size: font-group.scale[scale].font-size
+    line-height: font-group.scale[scale].line-height
 
-font-style(style)
-    font-family: font-styles[style].font-family
+font-group(group)
+    font-family: font-groups[group].font-family
 
-font-scale(style, scale)
-    font-style = font-styles[style]
-    font-size: font-style.scale[scale].font-size
-    line-height: font-style.scale[scale].line-height
+font-scale(group, scale)
+    font-group = font-groups[group]
+    font-size: font-group.scale[scale].font-size
+    line-height: font-group.scale[scale].line-height
