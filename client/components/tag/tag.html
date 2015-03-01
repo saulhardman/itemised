@@ -1,0 +1,6 @@
+<template name="tag">
+  <button data-id="{{_id}}" class="js-tag tag {{#if selected}}tag--is-selected{{/if}}" title="Show only `{{prettyName}}` expenses">
+    {{prettyName}} 
+    <span class="tag__count{{#if selected}} tag__count--is-selected{{/if}}">{{count}}</span>
+  </button>
+</template>
