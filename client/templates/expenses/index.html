@@ -1,4 +1,14 @@
 <template name="expenseIndex">
+  {{#contentFor "header"}}
+    <button class="js-menu-button header__button">
+      <svg class="icon header__icon">
+        <use xlink:href="#icon-menu"></use>
+      </svg>
+    </button>
+
+    <h1 class="header__title">Items <span class="header__count">{{count}}</span></h1>
+  {{/contentFor}}
+
   <div class="expense-index">
     {{> totals}}
 
