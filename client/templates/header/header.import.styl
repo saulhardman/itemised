@@ -7,7 +7,8 @@
     z-index: 4
     width: 100%
     height: size * 1px
-    background: colour('white')
+    color: colour('white')
+    background: colour('black')
 
     &__button
         padding: 16px
@@ -22,11 +23,11 @@
 
     &__title
         flex-grow(1)
-        font-scale('header', '2')
+        font-scale('header', '1')
         max-width: "calc(100% - %s)" % (size * 2px)
         line-height: rem(size)
+        letter-spacing: rem(.1)
         text-align: center
-        text-transform: uppercase
 
     &__count
         font-group('body')
