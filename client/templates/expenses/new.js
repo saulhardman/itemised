@@ -6,7 +6,7 @@ var ExpenseNew = function (template) {
 
 ExpenseNew.prototype = {
   init: function init() {
-    this.$element = $(this.template.firstNode);
+    this.$element = this.template.$('#js-expense-new');
     this.$tagsInput = this.$element.find('.js-expense-tags');
     this.$tags = this.$element.find('.js-tag');
     
@@ -64,6 +64,13 @@ ExpenseNew.prototype = {
     }
 
     this.$tagsInput.val(value).focus();
+
+    return false;
+  },
+  onClickCancelButton: function (e) {
+    e.preventDefault();
+  
+    Router.go('/');
 
     return false;
   },
@@ -130,6 +137,9 @@ Template.expenseNew.events({
   },
   'click .js-tag': function (e, template) {
     template.expenseNew.onClickTag(e);
+  },
+  'click #js-cancel-button': function (e, template) {
+    template.expenseNew.onClickCancelButton(e);
   }
 });
 

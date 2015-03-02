@@ -6,7 +6,7 @@ var ExpenseEdit = function (template) {
 
 ExpenseEdit.prototype = {
   init: function init() {
-    this.$element = $(this.template.firstNode);
+    this.$element = this.template.$('#js-expense-edit');
     this.$tagsInput = this.$element.find('.js-expense-tags');
     this.$tags = this.$element.find('.js-tag');
     
@@ -66,6 +66,13 @@ ExpenseEdit.prototype = {
 
     return false;
   },
+  onClickCancelButton: function (e) {
+    e.preventDefault();
+  
+    Router.go('/');
+
+    return false;
+  },
   setTagStates: function setTagStates() {
     var names = _.compact(this.$tagsInput.val().split(',').map(utils.slug));
 
@@ -112,6 +119,9 @@ Template.expenseEdit.events({
   },
   'click .js-tag': function (e, template) {
     template.expenseEdit.onClickTag(e);
+  },
+  'click #js-cancel-button': function (e, template) {
+    template.expenseEdit.onClickCancelButton(e);
   }
 });
 
