@@ -1,14 +1,14 @@
 <template name="expenseEdit">
   <form id="js-expense-edit" class="expense-form">
-    <p class="expense-form__field">
+    <p class="expense-form__field expense-form__field--underlined">
       <label class="expense-form__label" for="amount" id="amount-label">Amount</label>
       <input value="{{parseAmount expense.amount}}" aria-labelledby="amount-label" type="number" min="0" step="any" id="amount" name="amount" class="js-expense-amount expense-form__input expense-form__input--amount" placeholder="2.30" required>
     </p>
-    <p class="expense-form__field">
+    <p class="expense-form__field expense-form__field--underlined">
       <label class="expense-form__label" for="note" id="note-label">Note</label>
       <input value="{{expense.note}}" aria-labelledby="note-label" type="text" id="note" name="note" class="js-expense-note expense-form__input expense-form__input--note" placeholder="Morning coffee with Sam" required>
     </p>
-    <p class="expense-form__field">
+    <p class="expense-form__field expense-form__field--underlined">
       <label class="expense-form__label" for="date" id="date-label">Date</label>
       <input value="{{date}}" aria-labelledby="date-label" type="date" id="date" name="date" class="js-expense-date expense-form__input expense-form__input--date">
     </p>
@@ -20,11 +20,11 @@
         {{/each}}
       </select>
     </p>
-    <p class="expense-form__field">
+    <p class="expense-form__field expense-form__field--underlined">
       <label class="expense-form__label" for="location" id="location-label">Location</label>
       <input value="{{expense.location}}" aria-labelledby="location-label" type="text" id="location" name="location" class="js-expense-location expense-form__input expense-form__input--location" placeholder="Stokey Bear's">
     </p>
-    <p class="expense-form__field">
+    <p class="expense-form__field expense-form__field--underlined">
       <label class="expense-form__label" for="tags" id="tags-label">Tags</label>
       <input value="{{expense.tagNames}}" aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags expense-form__input expense-form__input--tags" placeholder="Food, Drinks, Bills">
     </p>
