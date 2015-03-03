@@ -34,8 +34,6 @@ Expense.prototype = {
     this.$container = this.$element.find('.js-container');
     this.$content = this.$element.find('.js-content');
     this.$additional = this.$element.find('.js-additional-information');
-    this.$additionalItems = this.$additional.find('.js-additional-information-item');
-    this.additionalItemCount = this.$additionalItems.length;
 
     this.setAdditionalHeight();
 

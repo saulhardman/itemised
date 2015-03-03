@@ -18,21 +18,21 @@
         </button>
         <div data-element-name="additional-information" class="js-additional-information expense__additional-information expense__additional-information--is-hidden">
           {{#if location}}
-            <p class="js-additional-information-item expense__additional-information-item expense__location">
+            <p class="expense__location">
               <svg class="icon expense__location-icon">
                 <use xlink:href="#icon-location"></use>
               </svg>
               {{location}}
             </p>
           {{/if}}
-          <time class="js-additional-information-item expense__additional-information-item expense__date" datetime="{{date}}">
+          <time class="expense__date" datetime="{{date}}">
             <svg class="icon expense__date-icon">
               <use xlink:href="#icon-date"></use>
             </svg>
             {{moment date format="dddd, Do [of] MMMM [at] hA"}}
           </time>
           {{#if hasTags}}
-            <div class="js-additional-information-item expense__additional-information-item expense__tags-container">
+            <div class="expense__tags-container">
               <ul class="js-tags expense__tags">
                 {{#each tags}}<li class="expense__tag">
                   {{> tag}}
