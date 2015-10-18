@@ -1,5 +1,5 @@
 Template.tag.helpers({
-  selected: function () {
+  selected() {
     var filteredTagIds;
 
     if ((filteredTagIds = Session.get('filteredTagIds') || []).length > 0) {
@@ -7,5 +7,5 @@ Template.tag.helpers({
     }
 
     return false;
-  }
+  },
 });

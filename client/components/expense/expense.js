@@ -1,35 +1,30 @@
-var Expense = function (template) {
-  this.template = template;
-
-  if (template.data.isDeleted) {
-    this.leftFunction = this.expenseDestroy;
-    this.rightFunction = this.expenseRestore;
-
-    this.leftFunction.requiresConfirmation = true;
-    this.leftFunction.confirmation = this.expenseDestroyConfirm;
-  } else {
-    this.leftFunction = this.expenseDelete;
-    this.rightFunction = this.expenseEdit;
-  }
-
-  this.position = 0;
-  this.iconPosition = 0;
-  this.isOpen = false;
-  this.isAnimating = false;
-  this.isMoving = false;
-  this.isClosing = false;
-
-  return this;
-};
-
-Expense.isScrolling = false;
-
-Expense.prototype = {
+let expense = {
   moveThreshold: 12,
   functionThreshold: 68,
   directions: { true: 'right', false: 'left' },
   scrollingThreshold: 12,
-  init: function () {
+  isScrolling: false,
+  init(template) {
+    this.template = template;
+
+    if (template.data.isDeleted) {
+      Object.assign(this, {
+        leftFunction: Object.assign(this.expenseDestroy, {
+          requiresConfirmation: true,
+          confirmation: this.expenseDestroyConfirm,
+        }),
+        rightFunction: this.expenseRestore,
+      });
+    } else {
+      Object.assign(this, {
+        leftFunction: this.expenseDelete,
+        rightFunction: this.expenseEdit,
+      });
+    }
+
+    return this;
+  },
+  setup() {
     this.$element = $(this.template.firstNode);
     this.$container = this.$element.find('.js-container');
     this.$content = this.$element.find('.js-content');
@@ -42,18 +37,18 @@ Expense.prototype = {
     this.fastClick = FastClick.attach(this.template.firstNode);
 
     this.$element.data('expense', this);
-  
+
     return this;
   },
-  setAdditionalHeight: function () {
+  setAdditionalHeight() {
     this.$additional
           .data('height', this.$additional.height())
           .height(0)
           .removeElementModifier('is-hidden');
-  
+
     return this;
   },
-  setMaxHeight: function (additional) {
+  setMaxHeight(additional) {
     var height = this.$container.height();
 
     if (typeof additional === 'number') {
@@ -61,7 +56,7 @@ Expense.prototype = {
     }
 
     this.$container.css('max-height', height);
-  
+
     return this;
   },
   onTouchStart: function onTouchStart(e) {
@@ -71,7 +66,7 @@ Expense.prototype = {
       return;
     }
 
-    Expense.isScrolling = false;
+    expense.isScrolling = false;
 
     touch = e.originalEvent.touches[0];
 
@@ -79,11 +74,11 @@ Expense.prototype = {
       x: touch.clientX,
       y: touch.clientY
     };
-  
+
     return this;
   },
-  onTouchMove: function (e) {
-    if (Expense.isScrolling || this.isClosing) {
+  onTouchMove(e) {
+    if (expense.isScrolling || this.isClosing) {
       return;
     }
 
@@ -117,11 +112,11 @@ Expense.prototype = {
       }
 
     }
-    
+
     return this;
   },
-  onTouchEnd: function () {
-    if (Expense.isScrolling) {
+  onTouchEnd() {
+    if (expense.isScrolling) {
       this.allowMovement();
 
       return;
@@ -172,19 +167,19 @@ Expense.prototype = {
       $.Velocity(this.$content, { translateX: [0, this.position] }).then(this.reset.bind(this));
 
     }
-  
+
     return this;
   },
-  onTouchCancel: function (e) {
-    if (Expense.isScrolling) {
+  onTouchCancel(e) {
+    if (expense.isScrolling) {
       this.allowMovement();
 
       return;
     }
-  
+
     return this;
   },
-  move: function (touch) {
+  move(touch) {
     var position = touch.clientX - this.movedFrom;
     var iconPosition;
     var absPosition;
@@ -223,20 +218,20 @@ Expense.prototype = {
     } else if (!this.leftFunctionQueued && absPosition >= this.functionThreshold) {
       this.queueLeftFunction();
     }
-  
+
     return this;
   },
-  scrollDetected: function () {
-    Expense.isScrolling = true;
-  
+  scrollDetected() {
+    expense.isScrolling = true;
+
     return this;
   },
-  allowMovement: function () {
-    Expense.isScrolling = false;
-  
+  allowMovement() {
+    expense.isScrolling = false;
+
     return this;
   },
-  reset: function () {
+  reset() {
     this.position = 0;
     this.iconPosition = 0;
     this.isOpen = false;
@@ -246,19 +241,19 @@ Expense.prototype = {
     this.leftFunctionQueued = false;
     this.rightFunctionQueued = false;
 
-    delete this.direction;
-    delete this.$icon;
-  
+    this.direction =
+    this.$icon = null;
+
     return this;
   },
-  expenseEdit: function () {
+  expenseEdit() {
     var id = this.template.data._id;
 
     Router.go('expense.edit', { _id: id });
-  
+
     return this;
   },
-  expenseDelete: function () {
+  expenseDelete() {
     var id = this.template.data._id;
 
     this.$element.addClass('exit-left');
@@ -267,7 +262,7 @@ Expense.prototype = {
 
     return this;
   },
-  expenseRestore: function () {
+  expenseRestore() {
     var id = this.template.data._id;
 
     this.$element.addClass('exit-right');
@@ -276,7 +271,7 @@ Expense.prototype = {
 
     return this;
   },
-  expenseDestroy: function () {
+  expenseDestroy() {
     var id = this.template.data._id;
 
     this.$element.addClass('exit-left');
@@ -285,21 +280,21 @@ Expense.prototype = {
 
     return this;
   },
-  expenseDestroyConfirm: function () {
+  expenseDestroyConfirm() {
     return window.confirm('Are you sure you want to destroy this expense?');
   },
-  destroy: function () {
+  destroy() {
     this.fastClick.destroy();
 
-    delete this.movedFrom;
-    delete this.element;
-    delete this.$element;
-    delete this.$content;
-    delete this.$icon;
+    this.movedFrom =
+    this.element =
+    this.$element =
+    this.$content =
+    this.$icon = null;
 
     return this;
   },
-  startMoving: function (position, direction) {
+  startMoving(position, direction) {
     this.isMoving = true;
 
     this.movedFrom = position;
@@ -313,50 +308,50 @@ Expense.prototype = {
       this.$icon = this.$element.find('.js-right-icon').show();
       this.$element.find('.js-left-icon').hide();
     }
-  
+
     return this;
   },
-  queueRightFunction: function () {
+  queueRightFunction() {
     this.rightFunctionQueued = true;
 
     this.$icon.addElementModifier('is-active');
-  
+
     return this;
   },
-  unQueueRightFunction: function () {
+  unQueueRightFunction() {
     this.rightFunctionQueued = false;
 
     this.$icon.removeElementModifier('is-active').css('transform', 'translateX(0)');
-  
+
     return this;
   },
-  queueLeftFunction: function () {
+  queueLeftFunction() {
     this.leftFunctionQueued = true;
 
     this.$icon.addElementModifier('is-active');
-  
+
     return this;
   },
-  unqueueLeftFunction: function () {
+  unqueueLeftFunction() {
     this.leftFunctionQueued = false;
 
     this.$icon.removeElementModifier('is-active').css('transform', 'translateX(0)');
-  
+
     return this;
   },
-  calculateFriction: function (position) {
+  calculateFriction(position) {
     var sign = position >= 0 ? 1 : -1;
     var absPosition = Math.abs(position);
-  
+
     return Math.floor(this.functionThreshold + ((absPosition - this.functionThreshold) * (this.functionThreshold / absPosition))) * sign;
   },
-  getIconPosition: function (position) {
+  getIconPosition(position) {
     var sign = position >= 0 ? 1 : -1;
     var absPosition = Math.abs(position);
-  
+
     return (absPosition - this.functionThreshold) * sign;
   },
-  close: function () {
+  close() {
     if (!this.isOpen ||
         this.isAnimating) {
       return this;
@@ -374,7 +369,7 @@ Expense.prototype = {
       this.isAnimating = false;
     }.bind(this));
   },
-  open: function () {
+  open() {
     if (this.isOpen ||
         this.isAnimating) {
       return this;
@@ -392,7 +387,7 @@ Expense.prototype = {
       this.isAnimating = false;
     }.bind(this));
   },
-  toggle: function () {
+  toggle() {
     if (this.isAnimating) {
       return this;
     }
@@ -407,24 +402,33 @@ Expense.prototype = {
   },
 };
 
-Template.expense.created = function () {
-  this.expense = new Expense(this);
-};
+Object.assign(expense, {
+  position: 0,
+  iconPosition: 0,
+  isOpen: false,
+  isAnimating: false,
+  isMoving: false,
+  isClosing: false,
+});
 
-Template.expense.rendered = function () {
-  this.expense.init();
-};
+Template.expense.onCreated(function () {
+  this.expense = Object.create(expense).init(this);
+});
 
-Template.expense.destroyed = function () {
+Template.expense.onRendered(function (what) {
+  this.expense.setup();
+});
+
+Template.expense.onDestroyed(function () {
   this.expense.destroy();
 
-  delete this.expense;
-};
+  this.expense = null;
+});
 
 Template.expense.helpers({
-  hasTags: function () {
+  hasTags() {
     return this.tags.count() > 0;
-  }
+  },
 });
 
 Template.expense.events({
@@ -502,5 +506,5 @@ Template.expense.events({
   },
   'touchcancel .js-expense': function (e, template) {
     template.expense.onTouchCancel(e);
-  }
+  },
 });

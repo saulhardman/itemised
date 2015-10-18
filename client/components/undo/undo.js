@@ -1,57 +1,56 @@
-var Undo = function (template) {
-  this.template = template;
-
-  return this;
-};
-
-Undo.prototype = {
+let undo = {
   isOpen: false,
-  init: function init() {
+  init(template) {
+    this.template = template;
+
+    return this;
+  },
+  setup() {
     this.$element = $(this.template.firstNode);
     this.$menu = this.$element.find('#js-undo-menu');
 
     this.shake = new Shake();
     this.fastClick = FastClick.attach(this.template.firstNode);
 
-    this.bindEvents();
-  
+    this.bindUIEvents();
+
     return this;
   },
-  destroy: function destroy() {
-    this.unBindEvents();
+  destroy() {
+    this.unBindUIEvents();
 
     this.fastClick.destroy();
-  
-    delete this.template;
-    delete this.$element;
-    delete this.$menu;
+
+    this.template =
+    this.$element =
+    this.$menu = null;
 
     return this;
   },
-  bindEvents: function bindEvents() {
+  bindUIEvents() {
     this.shake.start();
 
     $(window).on('shake', this.onShake.bind(this));
-  
+
     return this;
   },
-  unBindEvents: function unBindEvents() {
+  unBindUIEvents() {
     this.shake.stop();
 
     $(window).off('shake');
-  
+
     return this;
   },
-  onShake: function onShake(e) {
+  onShake(e) {
     var deleted = Expenses.find({ isDeleted: true });
 
     if (this.isOpen || deleted.count() === 0) {
       return;
     }
-  
+
     this.open();
   },
-  open: function open() {
+  open() {
     this.isOpen = true;
 
     this.$element.addClass('undo--is-open');
@@ -59,10 +58,10 @@ Undo.prototype = {
     this.$menu.addClass('undo--is-open__menu');
 
     Meteor.call('notificationRemove', { type: Notifications.TYPES.UNDO });
-  
+
     return this;
   },
-  close: function close() {
+  close() {
     if (!this.isOpen) {
       return;
     }
@@ -74,49 +73,49 @@ Undo.prototype = {
     }.bind(this));
 
     this.$menu.removeClass('undo--is-open__menu');
-  
+
     return this;
   },
-  onClickUndo: function onClickUndo(e) {
+  onClickUndo() {
     var lastExpenseDeleted = Expenses.findOne({ isDeleted: true }, { sort: { deletedAt: -1 } });
 
     Meteor.call('expenseRestore', lastExpenseDeleted._id);
 
     this.close();
-  
+
     return this;
   },
-  onClickArchive: function onClickArchive(e) {
+  onClickArchive() {
     Router.go('expense.archive');
-  
+
     return this;
   },
-  onClickCancel: function onClickCancel(e) {
+  onClickCancel() {
     this.close();
-  
+
     return this;
   },
 };
 
 Template.undo.helpers({
-  deletedCount: function () {
+  deletedCount() {
     return Expenses.find({ isDeleted: true }).count();
-  }
+  },
 });
 
-Template.undo.created = function () {
-  this.undo = new Undo(this);
-};
+Template.undo.onCreated(function () {
+  this.undo = Object.create(undo).init(this);
+});
 
-Template.undo.rendered = function () {
-  this.undo.init();
-};
+Template.undo.onRendered(function () {
+  this.undo.setup();
+});
 
-Template.undo.destroyed = function () {
+Template.undo.onDestroyed(function () {
   this.undo.destroy();
 
-  delete this.undo;
-};
+  this.undo = null;
+});
 
 Template.undo.events({
   'touchstart, touchmove, touchend, click': function (e) {

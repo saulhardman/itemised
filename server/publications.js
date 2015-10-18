@@ -1,7 +1,3 @@
-Meteor.publish('expenses', function() {
-  return Expenses.find();
-});
+Meteor.publish('expenses', () => Expenses.find());
 
-Meteor.publish('tags', function() {
-  return Tags.find();
-});
+Meteor.publish('tags', () => Tags.find());
