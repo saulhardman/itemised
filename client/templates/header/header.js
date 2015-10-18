@@ -9,7 +9,14 @@ Template.header.events({
     }
 
     return false;
-  }
+  },
+  'click #js-menu-button': function (e) {
+    e.preventDefault();
+  
+    Session.set('navigation.isOpen', true);
+
+    return false;
+  },
 });
 
 Template.header.rendered = function () {

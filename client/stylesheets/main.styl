@@ -14,13 +14,14 @@
 @require '../components/totals/totals.import'
 @require '../components/tag/tag.import'
 @require '../components/undo/undo.import'
-@require '../components/nav/nav.import'
+@require '../components/menu/menu.import'
 @require '../components/notification/notification.import'
 
 // Templates
 @require '../templates/expenses/expenses.import'
 @require '../templates/notifications/notifications.import'
 @require '../templates/header/header.import'
+@require '../templates/navigation/navigation.import'
 
 html,
 body
@@ -31,9 +32,13 @@ html
     height: 100%
     background: colour('white')
 
-body
+.body
     position: relative
     min-height: 100%
+    
+    &--is-locked
+        overflow: hidden
+        height: 100%
 
 .main
     padding: 64px 0 0

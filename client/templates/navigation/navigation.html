@@ -1,0 +1,17 @@
+<template name="navigation">
+  <nav id="js-navigation" class="navigation{{#if isOpen}} navigation--is-open{{/if}}" role="navigation">
+    <ul class="navigation__list">
+      <li class="navigation__item"><a class="navigation__link" href="" title="">Settings</a></li>
+      <li class="navigation__item"><a class="navigation__link" href="" title="">Login</a></li>
+      {{#each tags}}
+        <li class="navigation__item">{{> tag}}</li>
+      {{/each}}
+    </ul>
+
+    <button id="js-close-button" class="navigation__close-button">
+      <svg class="icon">
+        <use xlink:href="#icon-destroy"></use>
+      </svg>
+    </button>
+  </nav>
+</template>
