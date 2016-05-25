@@ -12,10 +12,10 @@
 
         & + &
             padding-top: 0
-            
+
     &--is-animating
         pointer-events: none
-            
+
     &__container
         position: relative
 
@@ -32,29 +32,29 @@
 
         &--right
             right: 16px
-            
+
         &--left
             left: 16px
-            
+
         &--is-active
             fill: colour('black')
-            
+
     &__button
         float: left
         margin: 4px 0 0
         width: 50%
         border: 0
-            
+
     &__date-icon,
     &__location-icon
         float: left
         color: colour('black')
-        
+
     &__date-icon
         margin: 5px 5px 0 -1px
         width: 14px
         height: 14px
-        
+
     &__location-icon
         margin: 4px 4px 0 -2px
         width: 16px
@@ -63,7 +63,7 @@
     &__content
         position: relative
         z-index: 2
-        
+
         &--is-reset
             transition: transform .4s
 
@@ -94,7 +94,7 @@
         white-space: no-wrap
         text-overflow: ellipsis
         overflow: hidden
-        
+
     &__separator
         flex-grow(1)
         border-bottom: 1px dotted colour('grey', 'light')
@@ -109,7 +109,7 @@
         color: colour('grey')
         font-size: rem(12)
         line-height: rem(24)
-        
+
     &__date
         padding-bottom: 6px
 
@@ -133,20 +133,20 @@
         border-right: 0
         border-bottom: 0
         overflow-x: scroll
-        overflow-scroll: touch
-        -webkit-overflow-scroll: touch
+        overflow-scrolling: touch
+        -webkit-overflow-scrolling: touch
         white-space: nowrap
-        
+
     &__tag
         display: inline-block
-        
+
         & + &
             margin-left: 8px
 
     &__additional-information
         overflow: hidden
         background: colour('white')
-        
+
         &--is-hidden
             position: absolute
             visibility: hidden

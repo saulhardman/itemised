@@ -21,6 +21,7 @@ let undo = {
 
     this.fastClick.destroy();
 
+    this.fastClick =
     this.template =
     this.$element =
     this.$menu = null;

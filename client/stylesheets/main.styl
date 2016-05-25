@@ -29,17 +29,22 @@ body
     padding: 0
 
 html
+    overflow: hidden
     height: 100%
+    min-height: 100%
     background: colour('white')
 
 .body
     position: relative
+    z-index: 1
     min-height: 100%
-    
+
     &--is-locked
         overflow: hidden
         height: 100%
 
 .main
-    padding: 64px 0 0
     overflow: hidden
+
+.header:not(:empty) ~ .main
+    padding: 64px 0 0

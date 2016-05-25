@@ -12,19 +12,19 @@ Template.header.events({
   },
   'click #js-menu-button': function (e) {
     e.preventDefault();
-  
-    Session.set('navigation.isOpen', true);
+
+    Session.set('navigation.isOpening', true);
 
     return false;
   },
 });
 
-Template.header.rendered = function () {
-  this.fastClick = FastClick.attach(this.firstNode.parentNode);
-};
+Template.header.onRendered(function () {
+  this.fastClick = FastClick.attach(this.firstNode);
+});
 
-Template.header.destroyed = function () {
-  this.fastClick.detach();
+Template.header.onDestroyed(function () {
+  this.fastClick.destroy();
 
-  delete this.fastClick;
-};
+  this.fastClick = null;
+});

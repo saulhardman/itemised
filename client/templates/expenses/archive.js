@@ -1,5 +1,5 @@
 Template.expenseArchive.helpers({
-  count: function () {
+  count() {
     var filteredTagIds;
 
     if ((filteredTagIds = Session.get('filteredTagIds') || []).length > 0) {
@@ -10,6 +10,6 @@ Template.expenseArchive.helpers({
   },
 });
 
-Template.expenseArchive.rendered = function () {
+Template.expenseArchive.onRendered(function () {
   this.find('#js-expenses')._uihooks = expensesUiHooks;
-};
+});

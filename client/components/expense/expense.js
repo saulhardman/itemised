@@ -1,7 +1,10 @@
 let expense = {
   moveThreshold: 12,
   functionThreshold: 68,
-  directions: { true: 'right', false: 'left' },
+  directions: {
+    true: 'right',
+    false: 'left',
+  },
   scrollingThreshold: 12,
   isScrolling: false,
   init(template) {
@@ -42,7 +45,7 @@ let expense = {
   },
   setAdditionalHeight() {
     this.$additional
-          .data('height', this.$additional.height())
+          .data('height', this.$additional.outerHeight())
           .height(0)
           .removeElementModifier('is-hidden');
 
@@ -141,7 +144,7 @@ let expense = {
         $.Velocity(this.$container, { translateX: '100%' }, { duration: timings.fast, easing: 'ease' }).then(function () {
           this.$element.removeBlockModifier('is-open');
 
-          return $.Velocity(this.$element, { height: 0 });
+          return $.Velocity(this.$element, { height: 0 }, { duration: timings.fastest, easing: 'ease' });
         }.bind(this)).then(this.rightFunction.bind(this));
 
       } else {
@@ -157,7 +160,7 @@ let expense = {
       $.Velocity(this.$container, { translateX: '-100%' }, { duration: timings.fast, easing: 'ease' }).then(function () {
         this.$element.removeBlockModifier('is-open');
 
-        return $.Velocity(this.$element, { height: 0 });
+        return $.Velocity(this.$element, { height: 0 }, { duration: timings.fastest, easing: 'ease' });
       }.bind(this)).then(this.leftFunction.bind(this));
 
     } else {
@@ -286,6 +289,7 @@ let expense = {
   destroy() {
     this.fastClick.destroy();
 
+    this.fastClick =
     this.movedFrom =
     this.element =
     this.$element =

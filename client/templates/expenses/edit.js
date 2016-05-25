@@ -1,22 +1,21 @@
-var ExpenseEdit = function (template) {
-  this.template = template;
-
-  return this;
-};
-
-ExpenseEdit.prototype = {
-  init: function init() {
-    this.$element = this.template.$('#js-expense-edit');
-    this.$tagsInput = this.$element.find('.js-expense-tags');
-    this.$tags = this.$element.find('.js-tag');
-    
-    this.setTagStates();
-
-    this.fastClick = FastClick.attach(this.template.firstNode);
+let expenseEdit = {
+  init(template) {
+    this.template = template;
 
     return this;
   },
-  onSubmitForm: function onSubmitForm(e) {
+  setup() {
+    this.$element = this.template.$('#js-expense-edit');
+    this.$tagsInput = this.$element.find('.js-expense-tags');
+    this.$tags = this.$element.find('.js-tag');
+
+    this.setTagStates();
+
+    this.fastClick = FastClick.attach(this.$element.get(0));
+
+    return this;
+  },
+  onSubmitForm(e) {
     e.preventDefault();
 
     var $amount = this.$element.find('.js-expense-amount');
@@ -38,7 +37,7 @@ ExpenseEdit.prototype = {
 
     return false;
   },
-  onClickTag: function onClickTag(e) {
+  onClickTag(e) {
     e.preventDefault();
 
     var $this = $(e.currentTarget);
@@ -48,7 +47,7 @@ ExpenseEdit.prototype = {
 
     if (names.indexOf(name) > -1) {
       names = _.without(names, name);
-      
+
       $this.removeClass('tag--is-selected');
     } else {
       names.push(name);
@@ -66,38 +65,39 @@ ExpenseEdit.prototype = {
 
     return false;
   },
-  onClickCancelButton: function (e) {
+  onClickCancelButton(e) {
     e.preventDefault();
-  
+
     Router.go('/');
 
     return false;
   },
-  setTagStates: function setTagStates() {
+  setTagStates() {
     var names = _.compact(this.$tagsInput.val().split(',').map(utils.slug));
 
     this.$tags.removeClass('tag--is-selected').filter(names.map(function (value) {
       return '.js-tag--' + value;
     }).join(', ')).addClass('tag--is-selected');
-  
+
     return this;
   },
-  destroy: function destroy() {
+  destroy() {
     this.fastClick.destroy();
 
-    delete this.$element;
-    delete this.$tagsInput;
-    delete this.$tags;
-  
+    this.fastClick =
+    this.$element =
+    this.$tagsInput =
+    this.$tags = null;
+
     return this;
   },
 };
 
 Template.expenseEdit.helpers({
-  date: function () {
+  date() {
     return moment(this.expense.date).format('YYYY-MM-DD');
   },
-  times: function () {
+  times() {
     var hour = moment(this.expense.date).get('hour');
 
     return _.map([8, 12, 16, 19, 22], function (value, index) {
@@ -125,16 +125,16 @@ Template.expenseEdit.events({
   }
 });
 
-Template.expenseEdit.created = function () {
-  this.expenseEdit = new ExpenseEdit(this);
-};
+Template.expenseEdit.onCreated(function () {
+  this.expenseEdit = Object.create(expenseEdit).init(this);
+});
 
-Template.expenseEdit.rendered = function () {
-  this.expenseEdit.init();
-};
+Template.expenseEdit.onRendered(function () {
+  this.expenseEdit.setup();
+});
 
-Template.expenseEdit.destroyed = function () {
+Template.expenseEdit.onDestroyed(function () {
   this.expenseEdit.destroy();
 
-  delete this.expenseEdit;
-};
+  this.expenseEdit = null;
+});

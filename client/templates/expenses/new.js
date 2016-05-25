@@ -1,22 +1,21 @@
-var ExpenseNew = function (template) {
-  this.template = template;
-
-  return this;
-};
-
-ExpenseNew.prototype = {
-  init: function init() {
-    this.$element = this.template.$('#js-expense-new');
-    this.$tagsInput = this.$element.find('.js-expense-tags');
-    this.$tags = this.$element.find('.js-tag');
-    
-    this.setTagStates();
-
-    this.fastClick = FastClick.attach(this.template.firstNode);
+let expenseNew = {
+  init(template) {
+    this.template = template;
 
     return this;
   },
-  onSubmitForm: function onSubmitForm(e) {
+  setup() {
+    this.$element = this.template.$('#js-expense-new');
+    this.$tagsInput = this.$element.find('.js-expense-tags');
+    this.$tags = this.$element.find('.js-tag');
+
+    this.setTagStates();
+
+    this.fastClick = FastClick.attach(this.$element.get(0));
+
+    return this;
+  },
+  onSubmitForm(e) {
     e.preventDefault();
 
     var $this = this.$element;
@@ -39,7 +38,7 @@ ExpenseNew.prototype = {
 
     return false;
   },
-  onClickTag: function onClickTag(e) {
+  onClickTag(e) {
     e.preventDefault();
 
     var $this = $(e.currentTarget);
@@ -49,7 +48,7 @@ ExpenseNew.prototype = {
 
     if (names.indexOf(name) > -1) {
       names = _.without(names, name);
-      
+
       $this.removeClass('tag--is-selected');
     } else {
       names.push(name);
@@ -67,35 +66,36 @@ ExpenseNew.prototype = {
 
     return false;
   },
-  onClickCancelButton: function (e) {
+  onClickCancelButton(e) {
     e.preventDefault();
-  
+
     Router.go('/');
 
     return false;
   },
-  setTagStates: function setTagStates() {
+  setTagStates() {
     var names = _.compact(this.$tagsInput.val().split(',').map(utils.slug));
 
     this.$tags.removeClass('tag--is-selected').filter(names.map(function (value) {
       return '.js-tag--' + value;
     }).join(', ')).addClass('tag--is-selected');
-  
+
     return this;
   },
-  destroy: function destroy() {
+  destroy() {
     this.fastClick.destroy();
 
-    delete this.$element;
-    delete this.$tagsInput;
-    delete this.$tags;
-  
+    this.fastClick =
+    this.$element =
+    this.$tagsInput =
+    this.$tags = null;
+
     return this;
   },
 };
 
 Template.expenseNew.helpers({
-  dates: function () {
+  dates() {
     var now = moment().add(1, 'day');
 
     return _(7).times(function () {
@@ -107,7 +107,7 @@ Template.expenseNew.helpers({
       };
     });
   },
-  times: function () {
+  times() {
     var theHourNow = moment().get('hour');
     var differences = [];
     var times;
@@ -140,19 +140,19 @@ Template.expenseNew.events({
   },
   'click #js-cancel-button': function (e, template) {
     template.expenseNew.onClickCancelButton(e);
-  }
+  },
 });
 
-Template.expenseNew.created = function () {
-  this.expenseNew = new ExpenseNew(this);
-};
+Template.expenseNew.onCreated(function () {
+  this.expenseNew = Object.create(expenseNew).init(this);
+});
 
-Template.expenseNew.rendered = function () {
-  this.expenseNew.init();
-};
+Template.expenseNew.onRendered(function () {
+  this.expenseNew.setup();
+});
 
-Template.expenseNew.destroyed = function () {
+Template.expenseNew.onDestroyed(function () {
   this.expenseNew.destroy();
 
-  delete this.expenseNew;
-};
+  this.expenseNew = null;
+});

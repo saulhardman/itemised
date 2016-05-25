@@ -7,20 +7,30 @@
     text-align: center
     background: colour('black')
     border: 0
-    
+
     &--primary
         background: colour('black')
-        
+
     &--secondary
         background: lighten(colour('black'), 10%)
-        
+
     &--tertiary
         background: lighten(colour('black'), 20%)
-        
+
+    &--primary-icon
+        float right
+        color: colour('white')
+        width: (100% / 3)
+
     &--small
         height = 44
         height: height * 1px
         line-height: rem(height)
+
+    &__icon
+        display: block
+        margin: 0 auto
+        height: 100%
 
     .no-touch &:hover,
     &:active

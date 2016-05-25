@@ -1,11 +1,11 @@
 Template.notifications.helpers({
-  notifications: function () {
+  notifications() {
     return Notifications.find();
   },
 });
 
 var notificationUiHooks = {
-  insertElement: function (node, next) {
+  insertElement(node, next) {
     var $node = $(node).css('visibility', 'hidden');
     var height;
 
@@ -19,7 +19,7 @@ var notificationUiHooks = {
       $node.height('auto');
     });
   },
-  removeElement: function (node) {
+  removeElement(node) {
     var $node = $(node);
 
     $.Velocity($node, { height: 0 }).then(function () {
@@ -29,15 +29,13 @@ var notificationUiHooks = {
 };
 
 Template.notifications.rendered = function () {
-
   this.find('#js-notifications')._uihooks = notificationUiHooks;
 
-  this.fastClick = FastClick.attach(this.firstNode.parentNode);
-
+  this.fastClick = FastClick.attach(this.firstNode);
 };
 
 Template.notifications.destroyed = function () {
-
   this.fastClick.destroy();
 
+  this.fastClick = null;
 };

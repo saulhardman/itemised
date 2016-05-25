@@ -1,5 +1,5 @@
 <template name="expenseIndex">
-  {{#contentFor "header"}}
+  <!-- {{#contentFor "header"}}
     <button id="js-menu-button" class="header__button">
       <svg class="icon header__icon">
         <use xlink:href="#icon-menu"></use>
@@ -7,10 +7,10 @@
     </button>
 
     <h1 class="header__title">Items</h1>
-  {{/contentFor}}
+  {{/contentFor}} -->
 
   <div class="expense-index">
-    {{> totals}}
+    <!-- {{> totals}} -->
 
     {{> notifications}}
 
@@ -24,6 +24,10 @@
   </div>
 
   {{#contentFor "menu"}}
-    <a class="button button--primary" href="{{pathFor route='expense.new'}}">Add Expense</a>
+    <a class="button button--primary-icon" href="{{pathFor route='expense.new'}}">
+      <svg data-element-name="icon" class="icon button__icon">
+        <use xlink:href="#icon-add"></use>
+      </svg>
+    </a>
   {{/contentFor}}
 </template>

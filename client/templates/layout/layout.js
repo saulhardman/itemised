@@ -1,5 +1,5 @@
 Template.layout.helpers({
-  isLocked: function () {
+  isLocked() {
     return Session.get('navigation.isOpen') || false;
-  }
+  },
 });

@@ -1,5 +1,5 @@
 .expense-index
-    padding: 0 0 64px
+    padding: 0 0 80px
 
 .expense-list
     background: colour('grey', 'light')
@@ -12,7 +12,7 @@
         position: relative
         height: 64px
         line-height: rem(64)
-        
+
         &--underlined:before
             content: ''
             display: block
@@ -21,17 +21,17 @@
             left: (1 / 3) * 100%
             width: "calc(%s - 16px)" % ((2 / 3) * 100%)
             border-top: 1px dotted colour('grey', 'light')
-        
+
     &__label,
     &__input
         float: left
         height: 100%
-        
+
     &__label
         padding: 0 32px 0 16px
         width: (1 / 3) * 100%
         text-align: right
-        
+
         &:after
             content: ':'
 
@@ -50,12 +50,12 @@
         width: (2 / 3) * 100%
         line-height: rem(64)
         overflow-x: scroll
-        overflow-scroll: touch
-        -webkit-overflow-scroll: touch
+        overflow-scrolling: touch
+        -webkit-overflow-scrolling: touch
         white-space: nowrap
-        
+
     &__tag
         display: inline-block
-        
+
         & + &
             margin-left: 12px

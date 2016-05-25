@@ -1,5 +1,5 @@
 expensesUiHooks = {
-  insertElement: function (node, next) {
+  insertElement(node, next) {
     var $node = $(node).css({ visibility: 'hidden', position: 'absolute' });
     var $container = $node.find('.js-container').css({ transform: 'translateX(-100%)' });
     var height;
@@ -12,14 +12,14 @@ expensesUiHooks = {
       visibility: 'visible',
       position: 'static'
     });
-    
-    $.Velocity($node, { height: height }, { duration: timings.fast, easing: 'ease' }).then(function () {
+
+    $.Velocity($node, { height: height }, { duration: timings.fastest, easing: 'ease' }).then(function () {
       $node.height('auto');
 
       return $container.velocity({ translateX: ['0%', '-100%'] }, { duration: timings.fast, easing: 'ease' });
     });
   },
-  removeElement: function (node) {
+  removeElement(node) {
     var $node = $(node);
     var translate;
 
@@ -40,7 +40,7 @@ expensesUiHooks = {
     $.Velocity($node, { translateX: [translate, 0] }, { duration: timings.fast, easing: 'ease' }).then(function () {
       $node.removeBlockModifier('is-open');
 
-      return $.Velocity($node, { height: 0 }, { duration: timings.fast, easing: 'ease' });
+      return $.Velocity($node, { height: 0 }, { duration: timings.fastest, easing: 'ease' });
     }).then(function () {
       $node.remove();
     });
