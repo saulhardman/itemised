@@ -1,0 +1,23 @@
+<template name="expenseIndex">
+  <div class="expense-index">
+    <!-- {{> totals}} -->
+
+    {{> notifications}}
+
+    <div id="js-expenses" class="expense-list">
+      {{#each expenses}}
+        {{> expense}}
+      {{/each}}
+    </div>
+
+    {{> undo}}
+  </div>
+
+  {{#contentFor "menu"}}
+    <a class="button button--primary-icon" href="{{pathFor route='expense.new'}}">
+      <svg data-element-name="icon" class="icon button__icon">
+        <use xlink:href="#icon-add"></use>
+      </svg>
+    </a>
+  {{/contentFor}}
+</template>

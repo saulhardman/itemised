@@ -1,0 +1,61 @@
+{
+  "name": "itemised",
+  "version": "0.0.1",
+  "description": "A meteor app to keep track of your personal expenses in a minimal, itemised list.",
+  "main": "client/main.js",
+  "dependencies": {
+    "faker": "^3.1.0",
+    "fastclick": "^1.0.6",
+    "jquery": "^2.2.4",
+    "lodash.compact": "^3.0.1",
+    "lodash.difference": "^4.3.0",
+    "lodash.min": "^4.0.1",
+    "lodash.sample": "^4.1.1",
+    "lodash.times": "^4.2.0",
+    "lodash.trim": "^4.4.0",
+    "lodash.uniq": "^4.3.0",
+    "lodash.values": "^4.1.0",
+    "lodash.without": "^4.2.0",
+    "moment": "^2.13.0",
+    "shake.js": "^1.2.2",
+    "velocity-animate": "^1.2.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.6",
+    "eslint": "^2.10.2",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.8.1",
+    "eslint-plugin-jsx-a11y": "^1.2.2",
+    "eslint-plugin-meteor": "^3.5.2",
+    "eslint-plugin-react": "^5.1.1"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint --silent",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saulhardman/itemised.git"
+  },
+  "keywords": [
+    "meteor",
+    "cordova",
+    "mobile",
+    "realtime",
+    "ddp",
+    "expenses",
+    "itemised"
+  ],
+  "author": "Saul Hardman <hello@iamsaul.co.uk>",
+  "license": "SEE LICENSE IN README.md",
+  "bugs": {
+    "url": "https://github.com/saulhardman/itemised/issues"
+  },
+  "homepage": "https://github.com/saulhardman/itemised#readme",
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  }
+}

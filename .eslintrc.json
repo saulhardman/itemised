@@ -1,0 +1,23 @@
+{
+  "plugins": [
+    "meteor"
+  ],
+  "extends": [
+    "airbnb",
+    "plugin:meteor/recommended"
+  ],
+  "rules": {
+    "meteor/eventmap-params": [
+      2, { "templateInstanceParamName": "instance" }
+    ],
+    "import/no-unresolved": [
+      2, { "ignore": ["^meteor/", "^/imports/"] }
+    ],
+    "no-param-reassign": [
+      2, { "props": false }
+    ],
+    "no-underscore-dangle": [
+      2, { "allow": ["_id", "_uihooks"] }
+    ]
+  }
+}

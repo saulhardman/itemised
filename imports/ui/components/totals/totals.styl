@@ -1,0 +1,24 @@
+.totals
+    position: relative
+    padding: 16px
+    background: colour('white')
+    border-bottom: 1px solid colour('black')
+
+.total
+    display: flex
+    flex-flow: row nowrap
+    align-items: baseline
+    background: colour('white')
+
+    & + &
+        margin: 10px 0 0
+
+    &__title
+        padding: 0 6px 0 0
+
+    &__separator
+        flex-grow: 1
+        border-bottom: 1px dotted colour('black')
+
+    &__amount
+        padding: 0 0 0 6px

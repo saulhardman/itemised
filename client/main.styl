@@ -1,0 +1,39 @@
+// Configuration, helpers, and mixins
+@require '../imports/ui/stylesheets/colours/colours'
+@require '../imports/ui/stylesheets/typography/typography'
+
+// Global
+@require '../imports/ui/stylesheets/global'
+
+// Components
+@require '../imports/ui/components/icons/icons'
+@require '../imports/ui/components/button/button'
+@require '../imports/ui/components/expense/expense'
+@require '../imports/ui/components/totals/totals'
+@require '../imports/ui/components/tag/tag'
+@require '../imports/ui/components/undo/undo'
+@require '../imports/ui/components/menu/menu'
+@require '../imports/ui/components/notification/notification'
+
+// Templates
+@require '../imports/ui/templates/expenses/expenses'
+@require '../imports/ui/templates/notifications/notifications'
+@require '../imports/ui/templates/header/header'
+
+html,
+body
+    margin: 0
+    padding: 0
+
+html,
+body,
+.main
+    height: 100%
+    background: colour('white')
+
+.main
+    overflow-y: scroll
+    -webkit-overflow-scrolling: touch
+
+    .header:not(:empty) ~ &
+        padding: 64px 0 0

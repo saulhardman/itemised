@@ -8,15 +8,11 @@ accounts-password
 accounts-ui-unstyled
 iron:router
 stylus
-mquandalle:bower
-meteorhacks:kadira
-momentjs:moment
 meteor-base
 mobile-experience
 mongo
 blaze-html-templates
 session
-jquery
 tracker
 logging
 reload
@@ -25,5 +21,8 @@ ejson
 spacebars
 check
 ecmascript
-standard-minifier-css
 standard-minifier-js
+juliancwirko:postcss
+aldeed:simple-schema
+mdg:validated-method
+aldeed:collection2

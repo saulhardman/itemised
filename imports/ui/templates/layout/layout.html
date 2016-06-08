@@ -1,0 +1,13 @@
+<template name="layout">
+  {{> icons}}
+
+  {{> header}}
+
+  <main id="js-main" class="main{{#if isLocked}} main--is-locked{{/if}}">
+    {{> yield}}
+  </main>
+
+  <nav id="js-menu" class="menu">
+    {{> yield "menu"}}
+  </nav>
+</template>

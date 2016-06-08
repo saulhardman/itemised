@@ -1,0 +1,56 @@
+<template name="expenseNew">
+  {{#contentFor "header"}}
+    <button id="js-back-button" class="js-menu-button header__button">
+      <svg class="icon header__icon">
+        <use xlink:href="#icon-back"></use>
+      </svg>
+    </button>
+
+    <h1 class="header__title">Add Item</h1>
+  {{/contentFor}}
+
+  <form id="js-expense-new" class="expense-form">
+    <p class="expense-form__field expense-form__field--underlined">
+      <label class="expense-form__label" for="amount" id="amount-label">Amount</label>
+      <input aria-labelledby="amount-label" type="number" min="0" step="any" id="amount" name="amount" class="js-expense-amount expense-form__input expense-form__input--amount" placeholder="2.30" required>
+    </p>
+    <p class="expense-form__field expense-form__field--underlined">
+      <label class="expense-form__label" for="note" id="note-label">Note</label>
+      <input aria-labelledby="note-label" type="text" id="note" name="note" class="js-expense-note expense-form__input expense-form__input--note" placeholder="Morning coffee with Sam" required>
+    </p>
+    <p class="expense-form__field">
+      <label class="expense-form__label" for="date" id="date-label">Day</label>
+      <select class="js-expense-date expense-form__select expense-form__select--date" id="date" aria-labelledby="date-label">
+        {{#each dates}}
+          <option value="{{value}}">{{title}}</option>
+        {{/each}}
+      </select>
+    </p>
+    <p class="expense-form__field">
+      <label class="expense-form__label" for="time" id="time-label">Time</label>
+      <select class="js-expense-time expense-form__select expense-form__select--time" id="time" aria-labelledby="time-label">
+        {{#each times}}
+          <option value="{{value}}" {{selected this.selected}}>{{title}}</option>
+        {{/each}}
+      </select>
+    </p>
+    <p class="expense-form__field expense-form__field--underlined">
+      <label class="expense-form__label" for="location" id="location-label">Location</label>
+      <input aria-labelledby="location-label" type="text" id="location" name="location" class="js-expense-location expense-form__input expense-form__input--location" placeholder="Stokey Bear's">
+    </p>
+    <p class="expense-form__field expense-form__field--underlined">
+      <label class="expense-form__label" for="tags" id="tags-label">Tags</label>
+      <input aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags expense-form__input expense-form__input--tags" placeholder="Food, Drinks, Bills">
+    </p>
+    <ul class="expense-form__tags">
+      {{#each tags}}<li class="expense-form__tag">
+        <button class="js-tag js-tag--{{name}} tag">
+          <span class="js-tag-name">{{prettyName}}</span>
+          <span class="tag__count">{{count}}</span>
+        </button>
+      </li>{{/each}}
+    </ul>
+    <button class="button button--functional expense-form__button">Add</button>
+    <button id="js-cancel-button" class="button button--functional button--secondary expense-form__button">Cancel</button>
+  </form>
+</template>

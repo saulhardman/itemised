@@ -1,0 +1,34 @@
+@require 'typography.config'
+@require 'typography.helpers'
+@require 'typography.mixins'
+
+html
+    font-size: 16px
+    color: colour('black')
+
+body,
+button,
+input,
+select,
+textarea
+    font('body', '2')
+    color: inherit
+    font-weight: font-weight('regular')
+
+h1,
+h2,
+h3,
+h4
+    font-weight: font-weight('semi-bold')
+
+h1
+    font('header', '4')
+
+h2
+    font('header', '3')
+
+h3
+    font('header', '2')
+
+h4
+    font('header', '1')

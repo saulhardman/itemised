@@ -1,0 +1,13 @@
+<template name="undo">
+  <div id="js-undo" class="undo">
+    <div id="js-undo-menu" class="undo__menu" type="toolbar">
+      <button id="js-undo-button" class="button button--functional button--primary undo__menu-item">Undo</button>
+      {{#if deletedCount}}
+        <button id="js-archive-button" class="button button--functional button--secondary undo__menu-item">See Archive ({{deletedCount}})</button>
+        <button id="js-cancel-button" class="button button--functional button--tertiary undo__menu-item">Cancel</button>
+      {{else}}
+        <button id="js-cancel-button" class="button button--functional button--secondary undo__menu-item">Cancel</button>
+      {{/if}}
+    </div>
+  </div>
+</template>

@@ -1,0 +1,101 @@
+html
+    box-sizing: border-box
+
+*
+    margin: 0
+    padding: 0
+
+    &,
+    &::before,
+    &::after
+        box-sizing: inherit
+
+/**
+ * Lists
+ */
+
+ul
+    margin: 0
+    padding: 0
+    list-style: none
+
+/**
+ * Touch elements
+ */
+
+a,
+label,
+select,
+button,
+[type="radio"],
+[type="checkbox"]
+    cursor: pointer
+    -webkit-tap-highlight-color: colour('transparent')
+    -webkit-tap-highlight-color: transparent
+
+/**
+ * Links
+ */
+
+a
+    display: inline-block
+
+    &,
+    &:active,
+    &:focus
+        color: currentColor
+        text-decoration: none
+
+/**
+ * Buttons
+ */
+
+button
+    border: 0
+
+    &:focus,
+    &:active
+        outline: none
+
+/**
+ * Helpers
+ */
+
+.group
+
+    &:after
+        content: ""
+        display: table
+        clear: both
+/**
+ * Input elements
+ */
+
+[type="text"],
+[type="number"],
+[type="search"],
+[type="email"],
+[type="date"],
+[type="time"]
+    margin: 0
+    padding: 0
+    color: colour('black')
+    background: colour('white')
+    background: linear-gradient(to bottom, colour('white'), colour('white'))
+    border: 0
+    border-radius: 0
+
+    &:focus
+        outline: none
+
+    &::-webkit-input-placeholder
+        color: colour('grey', 'medium')
+
+    &::-moz-placeholder
+        color: colour('grey', 'medium')
+
+    &:-ms-input-placeholder
+        color: colour('grey', 'medium')
+
+    &::placeholder
+        color: colour('grey', 'medium')
