@@ -15,6 +15,16 @@ import {
   insert as tagInsert,
 } from '/imports/api/tags/methods';
 
+export const findOne = new ValidatedMethod({
+  name: 'expenses.findOne',
+  validate: new SimpleSchema({
+    expenseId: { type: String, regEx: SimpleSchema.RegEx.Id },
+  }).validator(),
+  run({ expenseId }) {
+    return Expenses.findOne(expenseId);
+  },
+});
+
 export const insert = new ValidatedMethod({
   name: 'expenses.insert',
   validate: new SimpleSchema({

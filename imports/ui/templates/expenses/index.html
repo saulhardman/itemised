@@ -1,13 +1,15 @@
 <template name="expenseIndex">
   <div class="expense-index">
-    <!-- {{> totals}} -->
-
     {{> notifications}}
 
     <div id="js-expenses" class="expense-list">
-      {{#each expenses}}
-        {{> expense}}
-      {{/each}}
+      {{#if Template.subscriptionsReady}}
+        {{#each e in expenses}}
+          {{> expense e}}
+        {{/each}}
+      {{else}}
+        Loading...
+      {{/if}}
     </div>
 
     {{> undo}}

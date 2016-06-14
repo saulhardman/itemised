@@ -11,9 +11,13 @@
 
   <div class="expense-archive">
     <div id="js-expenses" class="expense-list">
-      {{#each expenses}}
-        {{> expense}}
-      {{/each}}
+      {{#if Template.subscriptionsReady}}
+        {{#each expenses}}
+          {{> expense}}
+        {{/each}}
+      {{else}}
+        Loading...
+      {{/if}}
     </div>
   </div>
 </template>

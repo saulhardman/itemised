@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import compact from 'lodash.compact';
 import { Template } from 'meteor/templating';
+import { Tracker } from 'meteor/tracker';
 import { Router } from 'meteor/iron:router';
 import min from 'lodash.min';
 import moment from 'moment';
@@ -9,6 +10,7 @@ import uniq from 'lodash.uniq';
 import without from 'lodash.without';
 
 import { insert } from '/imports/api/expenses/methods';
+import { Tags } from '/imports/api/tags/tags';
 import utils from '/imports/ui/utils';
 
 import './new.html';
@@ -105,6 +107,9 @@ const expenseNew = {
 };
 
 Template.expenseNew.helpers({
+  tags() {
+    return Tags.find();
+  },
   dates() {
     const now = moment().add(1, 'day');
 
@@ -154,10 +159,10 @@ Template.expenseNew.events({
 
 Template.expenseNew.onCreated(function onCreated() {
   this.expenseNew = Object.create(expenseNew).init(this);
-});
 
-Template.expenseNew.onRendered(function onRendered() {
-  this.expenseNew.setup();
+  this.autorun(() => this.subscribe('tags', () => {
+    Tracker.afterFlush(() => this.expenseNew.setup());
+  }));
 });
 
 Template.expenseNew.onDestroyed(function onDestroyed() {

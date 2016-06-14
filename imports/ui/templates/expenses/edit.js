@@ -1,12 +1,14 @@
 import $ from 'jquery';
 import compact from 'lodash.compact';
 import { Template } from 'meteor/templating';
+import { Tracker } from 'meteor/tracker';
 import { Router } from 'meteor/iron:router';
 import moment from 'moment';
 import uniq from 'lodash.uniq';
 import without from 'lodash.without';
 
-import { update } from '/imports/api/expenses/methods';
+import { update, findOne } from '/imports/api/expenses/methods';
+import { Tags } from '/imports/api/tags/tags';
 import utils from '/imports/ui/utils';
 
 import './edit.html';
@@ -104,11 +106,19 @@ const expenseEdit = {
 };
 
 Template.expenseEdit.helpers({
-  date() {
-    return moment(this.expense.date).format('YYYY-MM-DD');
+  expense() {
+    const expenseId = Router.current().params._id;
+    const expense = findOne.call({ expenseId });
+
+    expense.tagNames = expense.tags.map((tag) => tag.prettyName).join(', ');
+
+    return expense;
   },
-  times() {
-    const hour = moment(this.expense.date).get('hour');
+  tags() {
+    return Tags.find();
+  },
+  times(expense) {
+    const hour = moment(expense.date).get('hour');
 
     return [8, 12, 16, 19, 22].map((value) => {
       const title = utils.getHumanTime(value);
@@ -139,11 +149,18 @@ Template.expenseEdit.events({
 });
 
 Template.expenseEdit.onCreated(function onCreated() {
-  this.expenseEdit = Object.create(expenseEdit).init(this);
-});
+  const expenseId = Router.current().params._id;
 
-Template.expenseEdit.onRendered(function onRendered() {
-  this.expenseEdit.setup();
+  this.expenseEdit = Object.create(expenseEdit).init(this);
+
+  this.autorun(() => {
+    this.subscribe('singleExpense', expenseId);
+    this.subscribe('tags');
+
+    if (this.subscriptionsReady()) {
+      Tracker.afterFlush(() => this.expenseEdit.setup());
+    }
+  });
 });
 
 Template.expenseEdit.onDestroyed(function onDestroyed() {

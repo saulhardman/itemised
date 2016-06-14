@@ -43,12 +43,16 @@
       <input aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags expense-form__input expense-form__input--tags" placeholder="Food, Drinks, Bills">
     </p>
     <ul class="expense-form__tags">
-      {{#each tags}}<li class="expense-form__tag">
-        <button class="js-tag js-tag--{{name}} tag">
-          <span class="js-tag-name">{{prettyName}}</span>
-          <span class="tag__count">{{count}}</span>
-        </button>
-      </li>{{/each}}
+      {{#if Template.subscriptionsReady}}
+        {{#each tags}}<li class="expense-form__tag">
+          <button class="js-tag js-tag--{{name}} tag">
+            <span class="js-tag-name">{{prettyName}}</span>
+            <span class="tag__count">{{count}}</span>
+          </button>
+        </li>{{/each}}
+      {{else}}
+        Loading...
+      {{/if}}
     </ul>
     <button class="button button--functional expense-form__button">Add</button>
     <button id="js-cancel-button" class="button button--functional button--secondary expense-form__button">Cancel</button>

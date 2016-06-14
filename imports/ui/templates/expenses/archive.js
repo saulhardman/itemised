@@ -7,6 +7,17 @@ import { expensesUiHooks } from './expenses';
 import './archive.html';
 
 Template.expenseArchive.helpers({
+  expenses() {
+    const tagIds = Session.get('filteredTagIds') || [];
+    const selector = { isArchived: true };
+    const options = { sort: { archivedAt: -1 } };
+
+    if (tagIds.length) {
+      selector.tagIds = { $in: tagIds };
+    }
+
+    return Expenses.find(selector, options);
+  },
   count() {
     const filteredTagIds = Session.get('filteredTagIds') || [];
 
@@ -20,4 +31,11 @@ Template.expenseArchive.helpers({
 
 Template.expenseArchive.onRendered(function onRendered() {
   this.find('#js-expenses')._uihooks = expensesUiHooks;
+});
+
+Template.expenseArchive.onCreated(function onCreated() {
+  this.autorun(() => {
+    this.subscribe('expenses');
+    this.subscribe('tags');
+  });
 });
