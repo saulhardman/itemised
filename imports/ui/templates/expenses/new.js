@@ -2,7 +2,7 @@ import $ from 'jquery';
 import compact from 'lodash.compact';
 import { Template } from 'meteor/templating';
 import { Tracker } from 'meteor/tracker';
-import { Router } from 'meteor/iron:router';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 import min from 'lodash.min';
 import moment from 'moment';
 import times from 'lodash.times';
@@ -10,7 +10,7 @@ import uniq from 'lodash.uniq';
 import without from 'lodash.without';
 
 import { insert } from '/imports/api/expenses/methods';
-import { Tags } from '/imports/api/tags/tags';
+import { find as findTags } from '/imports/api/tags/methods';
 import utils from '/imports/ui/utils';
 
 import './new.html';
@@ -41,6 +41,8 @@ const expenseNew = {
     const $location = $this.find('.js-expense-location');
     const date = moment($date.val()).hour($time.val());
 
+    FlowRouter.go('/');
+
     insert.call({
       amount: Math.round($amount.val() * 100),
       note: $note.val(),
@@ -48,8 +50,6 @@ const expenseNew = {
       location: $location.val(),
       tagNames: compact(uniq(this.$tagsInput.val().split(',').map(utils.slug))),
     });
-
-    Router.go('/');
 
     return false;
   },
@@ -84,7 +84,7 @@ const expenseNew = {
   onClickCancelButton(event) {
     event.preventDefault();
 
-    Router.go('/');
+    FlowRouter.go('/');
 
     return false;
   },
@@ -108,7 +108,7 @@ const expenseNew = {
 
 Template.expenseNew.helpers({
   tags() {
-    return Tags.find();
+    return findTags.call({});
   },
   dates() {
     const now = moment().add(1, 'day');
@@ -160,9 +160,14 @@ Template.expenseNew.events({
 Template.expenseNew.onCreated(function onCreated() {
   this.expenseNew = Object.create(expenseNew).init(this);
 
-  this.autorun(() => this.subscribe('tags', () => {
-    Tracker.afterFlush(() => this.expenseNew.setup());
-  }));
+  this.autorun(() => {
+    this.subscribe('expenses');
+    this.subscribe('tags');
+
+    if (this.subscriptionsReady()) {
+      Tracker.afterFlush(() => this.expenseNew.setup());
+    }
+  });
 });
 
 Template.expenseNew.onDestroyed(function onDestroyed() {

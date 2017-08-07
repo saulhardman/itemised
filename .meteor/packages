@@ -6,7 +6,6 @@
 insecure
 accounts-password
 accounts-ui-unstyled
-iron:router
 stylus
 meteor-base
 mobile-experience
@@ -27,3 +26,6 @@ aldeed:simple-schema
 mdg:validated-method
 aldeed:collection2
 kadira:flow-router
+kadira:blaze-layout
+reactive-var
+dburles:collection-helpers

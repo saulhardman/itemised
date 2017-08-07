@@ -1,15 +1,5 @@
 <template name="expenseArchive">
-  {{#contentFor "header"}}
-    <button id="js-back-button" class="js-menu-button header__button">
-      <svg class="icon header__icon">
-        <use xlink:href="#icon-back"></use>
-      </svg>
-    </button>
-
-    <h1 class="header__title">Archive</h1>
-  {{/contentFor}}
-
-  <div class="expense-archive">
+  <main class="main expense-archive">
     <div id="js-expenses" class="expense-list">
       {{#if Template.subscriptionsReady}}
         {{#each expenses}}
@@ -19,5 +9,5 @@
         Loading...
       {{/if}}
     </div>
-  </div>
+  </main>
 </template>

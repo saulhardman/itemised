@@ -6,7 +6,7 @@ import { Expenses } from '/imports/api/expenses/expenses';
 Meteor.publish('expenses', () => Expenses.find());
 
 Meteor.publish('singleExpense', (expenseId) => {
-  check(expenseId, Meteor.Collection.ObjectID);
+  check(expenseId, String);
 
   return Expenses.find({ _id: expenseId });
 });

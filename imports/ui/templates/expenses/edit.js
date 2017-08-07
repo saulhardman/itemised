@@ -2,13 +2,13 @@ import $ from 'jquery';
 import compact from 'lodash.compact';
 import { Template } from 'meteor/templating';
 import { Tracker } from 'meteor/tracker';
-import { Router } from 'meteor/iron:router';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 import moment from 'moment';
 import uniq from 'lodash.uniq';
 import without from 'lodash.without';
 
 import { update, findOne } from '/imports/api/expenses/methods';
-import { Tags } from '/imports/api/tags/tags';
+import { find as findTags } from '/imports/api/tags/methods';
 import utils from '/imports/ui/utils';
 
 import './edit.html';
@@ -31,6 +31,7 @@ const expenseEdit = {
   onSubmitForm(event) {
     event.preventDefault();
 
+    const $id = this.$element.find('#js-expense-id');
     const $amount = this.$element.find('.js-expense-amount');
     const $note = this.$element.find('.js-expense-note');
     const $date = this.$element.find('.js-expense-date');
@@ -38,10 +39,10 @@ const expenseEdit = {
     const $location = this.$element.find('.js-expense-location');
     const date = moment($date.val()).hour($time.val());
 
-    Router.go('/');
+    FlowRouter.go('/');
 
     update.call({
-      expenseId: this.instance.data.expense._id,
+      expenseId: $id.val(),
       amount: Math.round($amount.val() * 100),
       note: $note.val(),
       date: date.toDate(),
@@ -82,7 +83,7 @@ const expenseEdit = {
   onClickCancelButton(event) {
     event.preventDefault();
 
-    Router.go('/');
+    FlowRouter.go('/');
 
     return false;
   },
@@ -106,19 +107,11 @@ const expenseEdit = {
 };
 
 Template.expenseEdit.helpers({
-  expense() {
-    const expenseId = Router.current().params._id;
-    const expense = findOne.call({ expenseId });
-
-    expense.tagNames = expense.tags.map((tag) => tag.prettyName).join(', ');
-
-    return expense;
+  tagNames(tags) {
+    return tags.map((tag) => tag.prettyName()).join(', ');
   },
-  tags() {
-    return Tags.find();
-  },
-  times(expense) {
-    const hour = moment(expense.date).get('hour');
+  times(date) {
+    const hour = moment(date).get('hour');
 
     return [8, 12, 16, 19, 22].map((value) => {
       const title = utils.getHumanTime(value);
@@ -149,15 +142,19 @@ Template.expenseEdit.events({
 });
 
 Template.expenseEdit.onCreated(function onCreated() {
-  const expenseId = Router.current().params._id;
+  const expenseId = FlowRouter.getParam('expenseId');
 
   this.expenseEdit = Object.create(expenseEdit).init(this);
 
   this.autorun(() => {
-    this.subscribe('singleExpense', expenseId);
+    this.subscribe('expenses');
     this.subscribe('tags');
 
     if (this.subscriptionsReady()) {
+      // NOTE: this disables reactivity
+      this.data.tags = findTags.call({});
+      this.data.expense = findOne.call({ expenseId });
+
       Tracker.afterFlush(() => this.expenseEdit.setup());
     }
   });

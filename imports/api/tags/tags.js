@@ -3,15 +3,9 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 import utils from '/imports/ui/utils';
 
-class TagsCollection extends Mongo.Collection {}
+import { Expenses } from '/imports/api/expenses/expenses';
 
-export const Tags = new TagsCollection('tags', {
-  transform(doc) {
-    doc.prettyName = utils.prettyName(doc.name);
-
-    return doc;
-  },
-});
+export const Tags = new Mongo.Collection('tags');
 
 Tags.deny({
   insert() {
@@ -29,10 +23,21 @@ Tags.schema = new SimpleSchema({
   name: {
     type: String,
   },
-  count: {
-    type: Number,
-    defaultValue: 1,
-  },
 });
 
 Tags.attachSchema(Tags.schema);
+
+Tags.helpers({
+  prettyName() {
+    return utils.prettyName(this.name);
+  },
+  count() {
+    return Expenses.find({ isArchived: false, tagIds: { $in: [this._id] } }).count();
+  },
+  archivedCount() {
+    return Expenses.find({ isArchived: true, tagIds: { $in: [this._id] } }).count();
+  },
+  totalCount() {
+    return Expenses.find({ tagIds: { $in: [this._id] } }).count();
+  },
+});

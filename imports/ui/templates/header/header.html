@@ -1,3 +1,11 @@
 <template name="header">
-  <header id="js-header" class="header">{{> yield "header"}}</header>
+  <header id="js-header" class="header">
+    <button id="js-back-button" class="js-menu-button header__button">
+      <svg class="icon header__icon">
+        <use xlink:href="#icon-back"></use>
+      </svg>
+    </button>
+
+    <h1 class="header__title">{{ title }}</h1>
+  </header>
 </template>

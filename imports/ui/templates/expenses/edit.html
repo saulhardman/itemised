@@ -1,16 +1,7 @@
 <template name="expenseEdit">
-  {{#contentFor "header"}}
-    <button id="js-back-button" class="js-menu-button header__button">
-      <svg class="icon header__icon">
-        <use xlink:href="#icon-back"></use>
-      </svg>
-    </button>
-
-    <h1 class="header__title">Edit Item</h1>
-  {{/contentFor}}
-
-  <form id="js-expense-edit" class="expense-form">
+  <form id="js-expense-edit" class="main expense-form">
     {{#if Template.subscriptionsReady}}
+      <input id="js-expense-id" type="hidden" value="{{expense._id}}">
       <p class="expense-form__field expense-form__field--underlined">
         <label class="expense-form__label" for="amount" id="amount-label">Amount</label>
         <input value="{{parseAmount expense.amount}}" aria-labelledby="amount-label" type="number" min="0" step="any" id="amount" name="amount" class="js-expense-amount expense-form__input expense-form__input--amount" placeholder="2.30" required>
@@ -26,7 +17,7 @@
       <p class="expense-form__field">
         <label class="expense-form__label" for="time" id="time-label">Time</label>
         <select class="js-expense-time expense-form__select expense-form__select--time" id="time" aria-labelledby="time-label">
-          {{#each times expense=expense}}
+          {{#each times date=expense.date}}
             <option value="{{value}}" {{selected this.selected}}>{{title}}</option>
           {{/each}}
         </select>
@@ -37,7 +28,7 @@
       </p>
       <p class="expense-form__field expense-form__field--underlined">
         <label class="expense-form__label" for="tags" id="tags-label">Tags</label>
-        <input value="{{expense.tagNames}}" aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags expense-form__input expense-form__input--tags" placeholder="Food, Drinks, Bills">
+        <input value="{{tagNames expense.tags}}" aria-labelledby="tags-label" type="text" id="tags" name="tags" class="js-expense-tags expense-form__input expense-form__input--tags" placeholder="Food, Drinks, Bills">
       </p>
       <ul class="expense-form__tags">
         {{#each tags}}<li class="expense-form__tag">

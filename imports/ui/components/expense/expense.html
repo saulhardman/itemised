@@ -34,8 +34,8 @@
           {{#if hasTags}}
             <div class="js-tags-container expense__tags-container">
               <ul class="js-tags expense__tags">
-                {{#each tags}}<li class="expense__tag">
-                  {{> tag}}
+                {{#each t in tags}}<li class="expense__tag">
+                  {{> tag t}}
                 </li>{{/each}}
               </ul>
             </div>

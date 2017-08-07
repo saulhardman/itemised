@@ -1,13 +1,15 @@
 import $ from 'jquery';
 import Shake from 'shake.js';
 import { Template } from 'meteor/templating';
-import { Router } from 'meteor/iron:router';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import { Expenses } from '/imports/api/expenses/expenses';
-import { restore } from '/imports/api/expenses/methods';
+import filteredTagIds from '/imports/ui/filteredTagIds';
+import { restore, findArchived } from '/imports/api/expenses/methods';
 import { types } from '/imports/api/notifications/notifications';
-import { remove as notificationRemove } from '/imports/api/notifications/methods';
 import utils from '/imports/ui/utils';
+
+import { remove as notificationRemove } from '/imports/api/notifications/methods';
 
 import './undo.html';
 
@@ -96,7 +98,7 @@ const undo = {
     return this;
   },
   onClickArchive() {
-    Router.go('expense.archive');
+    FlowRouter.go('expense.archive');
 
     return this;
   },
@@ -109,7 +111,7 @@ const undo = {
 
 Template.undo.helpers({
   deletedCount() {
-    return Expenses.find({ isArchived: true }).count();
+    return findArchived.call({ tagIds: filteredTagIds.get() }).count();
   },
 });
 

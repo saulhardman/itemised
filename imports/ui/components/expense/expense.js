@@ -1,10 +1,11 @@
 import $ from 'jquery';
-import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
-import { Router } from 'meteor/iron:router';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 import velocity from 'velocity-animate';
+import without from 'lodash.without';
 
 import { archive, remove, restore } from '/imports/api/expenses/methods';
+import filteredTagIds from '/imports/ui/filteredTagIds';
 import timings from '/imports/ui/timings';
 
 import './expense.html';
@@ -250,9 +251,9 @@ const expense = {
     return this;
   },
   expenseEdit() {
-    const id = this.instance.data._id;
+    const expenseId = this.instance.data._id;
 
-    Router.go('expense.edit', { _id: id });
+    FlowRouter.go('expense.edit', { expenseId });
 
     return this;
   },
@@ -437,7 +438,7 @@ Template.expense.onDestroyed(function onDestroyed() {
 
 Template.expense.helpers({
   hasTags() {
-    return this.tags.count() > 0;
+    return this.tagIds.length > 0;
   },
 });
 
@@ -452,21 +453,18 @@ Template.expense.events({
   'click .js-tag'(event) {
     event.preventDefault();
 
-    const tagIds = Session.get('filteredTagIds') || [];
+    const tagIds = filteredTagIds.get();
     const tagId = $(event.currentTarget).data('id');
-    const index = tagIds.indexOf(tagId);
 
-    if (index === -1) {
-      tagIds.push(tagId);
-
-      $(event.currentTarget).addClass('tag--is-selected');
-    } else {
-      tagIds.splice(index, 1);
+    if (tagIds.includes(tagId)) {
+      filteredTagIds.set(without(tagIds, tagId));
 
       $(event.currentTarget).removeClass('tag--is-selected');
-    }
+    } else {
+      filteredTagIds.set([...tagIds, tagId]);
 
-    Session.set('filteredTagIds', tagIds);
+      $(event.currentTarget).addClass('tag--is-selected');
+    }
 
     return false;
   },

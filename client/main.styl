@@ -24,16 +24,16 @@ html,
 body
     margin: 0
     padding: 0
+    background: colour('white')
 
 html,
 body,
 .main
     height: 100%
-    background: colour('white')
 
 .main
     overflow-y: scroll
     -webkit-overflow-scrolling: touch
 
-    .header:not(:empty) ~ &
+    .header ~ &
         padding: 64px 0 0

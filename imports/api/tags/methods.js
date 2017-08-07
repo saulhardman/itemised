@@ -1,19 +1,45 @@
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
-import { Expenses } from '/imports/api/expenses/expenses';
 import { Tags } from '/imports/api/tags/tags';
 import utils from '/imports/ui/utils';
 
-const tagIdValidate = new SimpleSchema({
-  tagId: {
-    type: String,
-    regEx: SimpleSchema.RegEx.Id,
+const TAG_ID_SCHEMA = {
+  type: String,
+  regEx: SimpleSchema.RegEx.Id,
+};
+
+const TAG_ID_VALIDATOR = new SimpleSchema({ tagId: TAG_ID_SCHEMA }).validator();
+
+export const findOne = new ValidatedMethod({
+  name: 'tag.findOne',
+  validate: TAG_ID_VALIDATOR,
+  run({ tagId }) {
+    return Tags.findOne(tagId);
   },
-}).validator();
+});
+
+export const find = new ValidatedMethod({
+  name: 'tag.find',
+  validate: new SimpleSchema({
+    tagIds: {
+      type: [String],
+      optional: true,
+    },
+  }).validator(),
+  run({ tagIds }) {
+    const options = { sort: { count: -1 } };
+
+    if (tagIds && tagIds.length > 0) {
+      return Tags.find({ _id: { $in: tagIds } }, options);
+    }
+
+    return Tags.find({}, options);
+  },
+});
 
 export const insert = new ValidatedMethod({
-  name: 'tags.insert',
+  name: 'tag.insert',
   validate: new SimpleSchema({
     tagName: { type: String },
   }).validator(),
@@ -30,53 +56,27 @@ export const insert = new ValidatedMethod({
 
     return {
       exists: false,
-      tagId: Tags.insert({
-        name: tagSlug,
-      }),
+      tagId: Tags.insert({ name: tagSlug }),
     };
   },
 });
 
-export const increment = new ValidatedMethod({
-  name: 'tags.increment',
-  validate: tagIdValidate,
-  run({ tagId }) {
-    return Tags.update(tagId, {
-      $inc: {
-        count: 1,
-      },
-    });
-  },
-});
-
-export const decrement = new ValidatedMethod({
-  name: 'tags.decrement',
-  validate: tagIdValidate,
-  run({ tagId }) {
-    return Tags.update(tagId, {
-      $inc: {
-        count: -1,
-      },
-    });
-  },
-});
-
 export const remove = new ValidatedMethod({
-  name: 'tags.remove',
-  validate: tagIdValidate,
+  name: 'tag.remove',
+  validate: TAG_ID_VALIDATOR,
   run({ tagId }) {
     return Tags.remove(tagId);
   },
 });
 
 export const check = new ValidatedMethod({
-  name: 'tags.check',
-  validate: tagIdValidate,
+  name: 'tag.check',
+  validate: TAG_ID_VALIDATOR,
   run({ tagId }) {
-    const count = Expenses.find({ isArchived: false, tagIds: { $in: [tagId] } }).count();
+    const tag = findOne(tagId);
 
-    if (count > 0) {
-      return false;
+    if (tag.totalCount() > 0) {
+      return true;
     }
 
     return remove.call({ tagId });

@@ -1,13 +1,9 @@
 <template name="layout">
   {{> icons}}
 
-  {{> header}}
+  {{#if title}}
+    {{> header title=title}}
+  {{/if}}
 
-  <main id="js-main" class="main{{#if isLocked}} main--is-locked{{/if}}">
-    {{> yield}}
-  </main>
-
-  <nav id="js-menu" class="menu">
-    {{> yield "menu"}}
-  </nav>
+  {{> Template.dynamic template=content}}
 </template>

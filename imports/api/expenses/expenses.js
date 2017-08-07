@@ -1,19 +1,9 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
-import { Tags } from '/imports/api/tags/tags';
+import { find as findTags } from '/imports/api/tags/methods';
 
-class ExpensesCollection extends Mongo.Collection {}
-
-export const Expenses = new ExpensesCollection('expenses', {
-  transform(doc) {
-    if (Array.isArray(doc.tagIds)) {
-      doc.tags = Tags.find({ _id: { $in: doc.tagIds } });
-    }
-
-    return doc;
-  },
-});
+export const Expenses = new Mongo.Collection('expenses');
 
 Expenses.deny({
   insert() {
@@ -55,6 +45,7 @@ Expenses.schema = new SimpleSchema({
         return this.value;
       }
     },
+    optional: true,
   },
   isArchived: {
     type: Boolean,
@@ -90,8 +81,12 @@ Expenses.schema = new SimpleSchema({
 
 Expenses.attachSchema(Expenses.schema);
 
-// Expenses.helpers({
-//   tags() {
-//     return Tags.findOne(this.listId);
-//   },
-// });
+Expenses.helpers({
+  tags() {
+    if (this.tagIds.length > 0) {
+      return findTags.call({ tagIds: this.tagIds });
+    }
+
+    return [];
+  },
+});

@@ -1,5 +1,5 @@
 <template name="expenseIndex">
-  <div class="expense-index">
+  <main class="main expense-index">
     {{> notifications}}
 
     <div id="js-expenses" class="expense-list">
@@ -13,13 +13,13 @@
     </div>
 
     {{> undo}}
-  </div>
+  </main>
 
-  {{#contentFor "menu"}}
-    <a class="button button--primary-icon" href="{{pathFor route='expense.new'}}">
+  <nav id="js-menu" class="menu">
+    <a class="button button--primary-icon" href="{{expenseNewPath}}">
       <svg data-element-name="icon" class="icon button__icon">
         <use xlink:href="#icon-add"></use>
       </svg>
     </a>
-  {{/contentFor}}
+  </nav>
 </template>

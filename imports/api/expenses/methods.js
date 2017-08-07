@@ -1,53 +1,88 @@
-import difference from 'lodash.difference';
 import { Meteor } from 'meteor/meteor';
-import { Session } from 'meteor/session';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 
+import filteredTagIds from '/imports/ui/filteredTagIds';
 import { Expenses } from '/imports/api/expenses/expenses';
 import { types } from '/imports/api/notifications/notifications';
 import { insert as notificationInsert } from '/imports/api/notifications/methods';
-import { Tags } from '/imports/api/tags/tags';
 import {
-  check as tagCheck,
-  decrement as tagDecrement,
-  increment as tagIncrement,
-  insert as tagInsert,
+  find as findTags,
+  insert as insertTag,
+  check as checkTag,
 } from '/imports/api/tags/methods';
 
+const ID_SCHEMA = {
+  type: String,
+  regEx: SimpleSchema.RegEx.Id,
+};
+
+const ID_VALIDATOR = new SimpleSchema({
+  expenseId: ID_SCHEMA,
+}).validator();
+
+const TAG_NAMES_SCHEMA = {
+  type: [String],
+  defaultValue: [],
+};
+
+const TAG_NAME_SCHEMA = { type: String };
+
+const TAG_IDS_VALIDATOR = new SimpleSchema({
+  tagIds: { type: [String] },
+  'tagIds.$': ID_SCHEMA,
+}).validator();
+
 export const findOne = new ValidatedMethod({
-  name: 'expenses.findOne',
-  validate: new SimpleSchema({
-    expenseId: { type: String, regEx: SimpleSchema.RegEx.Id },
-  }).validator(),
+  name: 'expense.findOne',
+  validate: ID_VALIDATOR,
   run({ expenseId }) {
     return Expenses.findOne(expenseId);
   },
 });
 
+export const find = new ValidatedMethod({
+  name: 'expense.find',
+  validate: TAG_IDS_VALIDATOR,
+  run({ tagIds }) {
+    const selector = { isArchived: false };
+    const options = { sort: { date: -1 } };
+
+    if (tagIds.length > 0) {
+      selector.tagIds = { $in: tagIds };
+    }
+
+    return Expenses.find(selector, options);
+  },
+});
+
+export const findArchived = new ValidatedMethod({
+  name: 'expense.findArchived',
+  validate: TAG_IDS_VALIDATOR,
+  run({ tagIds }) {
+    const selector = { isArchived: true };
+    const options = { sort: { archivedAt: -1 } };
+
+    if (tagIds.length > 0) {
+      selector.tagIds = { $in: tagIds };
+    }
+
+    return Expenses.find(selector, options);
+  },
+});
+
 export const insert = new ValidatedMethod({
-  name: 'expenses.insert',
+  name: 'expense.insert',
   validate: new SimpleSchema({
-    amount: { type: Number },
-    note: { type: String },
-    date: { type: Date },
-    location: { type: String },
-    tagNames: { type: [String] },
+    amount: Expenses.simpleSchema().schema('amount'),
+    note: Expenses.simpleSchema().schema('note'),
+    date: Expenses.simpleSchema().schema('date'),
+    location: Expenses.simpleSchema().schema('location'),
+    tagNames: TAG_NAMES_SCHEMA,
+    'tagNames.$': TAG_NAME_SCHEMA,
   }).validator(),
   run({ amount, note, date, location, tagNames }) {
-    let tagIds = [];
-
-    if (Array.isArray(tagNames)) {
-      tagIds = tagNames.map((tagName) => {
-        const result = tagInsert.call({ tagName });
-
-        if (result.exists) {
-          tagIncrement.call({ tagId: result.tagId });
-        }
-
-        return result.tagId;
-      });
-    }
+    const tagIds = tagNames.map((tagName) => insertTag.call({ tagName }).tagId);
 
     return Expenses.insert({
       amount,
@@ -60,32 +95,18 @@ export const insert = new ValidatedMethod({
 });
 
 export const update = new ValidatedMethod({
-  name: 'expenses.update',
+  name: 'expense.update',
   validate: new SimpleSchema({
-    expenseId: { type: String },
-    amount: { type: Number },
-    note: { type: String },
-    location: { type: String },
-    date: { type: Date },
-    tagNames: { type: [String] },
+    expenseId: ID_SCHEMA,
+    amount: Expenses.simpleSchema().schema('amount'),
+    note: Expenses.simpleSchema().schema('note'),
+    location: Expenses.simpleSchema().schema('location'),
+    date: Expenses.simpleSchema().schema('date'),
+    tagNames: TAG_NAMES_SCHEMA,
+    'tagNames.$': TAG_NAME_SCHEMA,
   }).validator(),
   run({ expenseId, note, amount, date, location, tagNames }) {
-    const expense = Expenses.findOne(expenseId);
-    let tagIds = [];
-
-    if (Array.isArray(tagNames)) {
-      tagIds = tagNames.map((tagName) => {
-        const result = tagInsert.call({ tagName });
-
-        if (result.exists) {
-          tagIncrement.call({ tagId: result.tagId });
-        }
-
-        return result.tagId;
-      });
-    }
-
-    difference(expense.tagIds, tagIds).forEach((tagId) => tagDecrement.call({ tagId }));
+    const tagIds = tagNames.map((tagName) => insertTag.call({ tagName }).tagId);
 
     return Expenses.update(expenseId, {
       $set: {
@@ -101,18 +122,14 @@ export const update = new ValidatedMethod({
 });
 
 export const archive = new ValidatedMethod({
-  name: 'expenses.archive',
-  validate: new SimpleSchema({
-    expenseId: { type: String },
-  }).validator(),
+  name: 'expense.archive',
+  validate: ID_VALIDATOR,
   run({ expenseId }) {
-    const expense = Expenses.findOne(expenseId);
     const now = new Date();
-    let message;
-
-    expense.tagIds.forEach((tagId) => tagDecrement.call({ tagId }));
 
     if (Meteor.isClient) {
+      let message;
+
       // TODO: replace this with mobile breakpoint condition
       if (Meteor.isCordova) {
         message = 'Shake your device or tap here to undo';
@@ -125,12 +142,11 @@ export const archive = new ValidatedMethod({
         type: types.undo,
       });
 
-      const filteredTagIds = Session.get('filteredTagIds') || [];
-      const tags = Tags.find({ _id: { $in: filteredTagIds } }).fetch();
+      const tags = findTags.call({ tagIds: filteredTagIds.get() }).fetch();
       const count = tags.reduce((accumulator, tag) => accumulator + tag.count, 0);
 
       if (count === 0) {
-        Session.set('filteredTagIds', []);
+        filteredTagIds.set([]);
       }
     }
 
@@ -145,24 +161,20 @@ export const archive = new ValidatedMethod({
 });
 
 export const restore = new ValidatedMethod({
-  name: 'expenses.restore',
+  name: 'expense.restore',
   validate: new SimpleSchema({
-    expenseId: { type: String, optional: true },
-  }).validator(),
+    expenseId: Object.assign({}, ID_SCHEMA, {
+      autoValue() {
+        if (this.isSet) {
+          return this.value;
+        }
+
+        return Expenses.findOne({}, { sort: { archivedAt: -1 } })._id;
+      },
+    }),
+  }).validator({ clean: true }),
   run({ expenseId }) {
-    let expense;
-
-    if (typeof expenseId === 'undefined') {
-      expense = Expenses.findOne({}, { sort: { archivedAt: -1 } });
-    } else {
-      expense = Expenses.findOne(expenseId);
-    }
-
-    expense.tagIds.forEach((tagId) => {
-      tagIncrement.call({ tagId });
-    });
-
-    return Expenses.update(expense._id, {
+    return Expenses.update(expenseId, {
       $set: {
         isArchived: false,
         updatedAt: new Date(),
@@ -172,14 +184,10 @@ export const restore = new ValidatedMethod({
 });
 
 export const remove = new ValidatedMethod({
-  name: 'expenses.remove',
-  validate: new SimpleSchema({
-    expenseId: { type: String },
-  }).validator(),
+  name: 'expense.remove',
+  validate: ID_VALIDATOR,
   run({ expenseId }) {
-    const expense = Expenses.findOne(expenseId);
-
-    expense.tagIds.forEach((tagId) => tagCheck.call({ tagId }));
+    findOne.call({ expenseId }).forEach((tag) => checkTag.call({ tagId: tag._id }));
 
     return Expenses.remove(expenseId);
   },

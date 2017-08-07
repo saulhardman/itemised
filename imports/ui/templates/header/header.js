@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating';
-import { Router } from 'meteor/iron:router';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import './header.html';
 
@@ -10,7 +10,7 @@ Template.header.events({
     if (window.history.length > 0) {
       window.history.back();
     } else {
-      Router.go('/');
+      FlowRouter.go('/');
     }
 
     return false;
